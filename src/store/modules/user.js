@@ -1,19 +1,19 @@
-import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import router from '@/router'
 export const useUserStore = defineStore('user', {
     state: () => {
         return {
-            token: '',
+            token: localStorage.getItem('TOKEN'),
             userInfo: {}
         }
     },
     actions: {
         setToken(token) {
             this.token = token
+            localStorage.setItem('TOKEN', token)
         },
         getUserInfo(data) {
             return new Promise((resolve, reject) => {
+                this.setToken('token')
                 this.userInfo = data
                 resolve()
             })
@@ -21,6 +21,7 @@ export const useUserStore = defineStore('user', {
         logout() {
             return new Promise((resolve, reject) => {
                 this.token = ''
+                localStorage.removeItem('TOKEN')
                 this.userInfo = {}
                 resolve()
             })

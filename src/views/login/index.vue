@@ -52,7 +52,7 @@
 <script lang="ts" setup>
 import router from '@/router'
 import { reactive } from 'vue'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/store/modules/user'
 interface FormState {
   email: string
   password: string

@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { reactive, ref, onBeforeMount } from 'vue'
 import router from '@/router'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/store/modules/user'
 const email = useUserStore().userInfo
 const selectedKeys = ref(['/home'])
 onBeforeMount(() => {
