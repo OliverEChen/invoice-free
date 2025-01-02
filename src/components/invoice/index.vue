@@ -53,21 +53,21 @@
       <div style="display: flex; align-items: center">
         <img
           style="width: 12px; height: 12px; margin-right: 10px"
-          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+          src="../../assets/icon-2.png"
         />
         <div>86 5002647</div>
       </div>
       <div style="display: flex; align-items: center">
         <img
           style="width: 12px; height: 12px; margin-right: 10px"
-          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+          src="../../assets/icon-1.png"
         />
         <div>158965841265</div>
       </div>
       <div style="display: flex; align-items: center">
         <img
           style="width: 12px; height: 12px; margin-right: 10px"
-          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+          src="../../assets/icon-3.png"
         />
         <div>158965841265</div>
       </div>
@@ -118,7 +118,7 @@
           <div style="font-weight: 700">S$88.88</div>
         </div>
         <div style="border: 1px solid #ccc; margin: 8px 0"></div>
-        <div>
+        <div style="page-break-inside: avoid;">
           <img
             style="width: 100px; height: 100px; margin-right: 20px"
             src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
