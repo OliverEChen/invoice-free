@@ -22,6 +22,8 @@ router.beforeEach(async (to, from, next) => {
   } else {
     if (to.path === '/login') {
       next()
+    }else if(to.path === '/signup') {
+      next()
     } else {
       next({ path: '/login', query: { redirect: to.path } })
     }

@@ -17,18 +17,18 @@
           <a-form-item
             label="Email"
             name="email"
-            :rules="[{ required: true, message: 'Please input your email!' }]"
+            :rules="[{required: true, validator: validateEmail, trigger: 'change'}]"
           >
-            <a-input placeholder="Please input your email" v-model:value="formState.email" />
+            <a-input placeholder="name@example.com" v-model:value="formState.email" />
           </a-form-item>
 
           <a-form-item
             label="Password"
             name="password"
-            :rules="[{ required: true, message: 'Please input your password!' }]"
+            :rules="[{ required: true, validator: validatePassword, trigger: 'change' }]"
           >
             <a-input-password
-              placeholder="Please input your password"
+              placeholder="******"
               v-model:value="formState.password"
             />
           </a-form-item>
@@ -53,31 +53,32 @@
 import router from '@/router'
 import { reactive } from 'vue'
 import { useUserStore } from '@/store/modules/user'
+import {validateEmail, validatePassword} from '@/utils/utils'
+import {post} from '@/api/http'
+import { message } from 'ant-design-vue';
+
 interface FormState {
   email: string
   password: string
 }
-const userInfo = {
-  email: 'admin@163.com',
-  password: 'password123',
-}
 const formState = reactive<FormState>({
-  email: 'admin@163.com',
-  password: 'password123',
+  email: '',
+  password: '',
 })
 const userStore = useUserStore()
 const toSignUp = () => {
   router.push('/signup')
 }
-const onFinish = (values: any) => {
-  if (values.email === userInfo.email && values.password === userInfo.password) {
-    userStore.getUserInfo(values).then(() => {
-      router.replace('/')
-    })
-  } else {
-    alert('Incorrect email or password')
-  }
+const onFinish = async (values: any) => {
   console.log('Success:', values)
+  const {code, data, msg} = await post('/api/v1/user/login', values)
+  if(code === '00000'){
+    userStore.setToken(data.token)
+    userStore.setUserInfo(data)
+    router.push('/')
+  }else {
+    message.error(msg)
+  }
 }
 
 const onFinishFailed = (errorInfo: any) => {

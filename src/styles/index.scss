@@ -4,16 +4,19 @@
 @use './custom.scss';
 
 //滚动条外观设置
-::-webkit-scrollbar {
-  width: 6px;
-}
+// ::-webkit-scrollbar {
+//   width: 6px;
+// }
 
-::-webkit-scrollbar-track {
-  //   background: $base-menu-background;
-}
+// ::-webkit-scrollbar-track {
+//     background: $base-menu-background;
+// }
 
-::-webkit-scrollbar-thumb {
-  width: 10px;
-  background-color: $scrollbar-thumb-color;
-  border-radius: 10px;
+// ::-webkit-scrollbar-thumb {
+//   width: 10px;
+//   background-color: $scrollbar-thumb-color;
+//   border-radius: 10px;
+// }
+body {
+  min-width: 800px;
 }

@@ -11,12 +11,8 @@ export const useUserStore = defineStore('user', {
             this.token = token
             localStorage.setItem('TOKEN', token)
         },
-        getUserInfo(data) {
-            return new Promise((resolve, reject) => {
-                this.setToken('token')
-                this.userInfo = data
-                resolve()
-            })
+        setUserInfo(data) {
+            this.userInfo = data
         },
         logout() {
             return new Promise((resolve, reject) => {
