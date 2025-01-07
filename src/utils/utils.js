@@ -39,3 +39,60 @@ export function validatePassword(_rule, value) {
         return Promise.reject('The password At least 1 letter, 1 number, and 1 special character, with a length of at least 8'); // 格式错误，返回一个错误信息
     }
 }
+export function addDaysToDate(dateString, daysToAdd) {
+    // 将日期字符串解析为Date对象
+    const dateParts = dateString.split('-');
+    const year = parseInt(dateParts[0], 10);
+    const month = parseInt(dateParts[1], 10) - 1; // 月份从0开始，需要减1
+    const day = parseInt(dateParts[2], 10);
+    const startDate = new Date(year, month, day);
+
+    // 计算X天后的日期
+    const futureDate = new Date(startDate.getTime() + (daysToAdd * 24 * 60 * 60 * 1000));
+
+    // 格式化日期为YYYY-MM-DD字符串
+    const futureYear = futureDate.getFullYear();
+    const futureMonth = String(futureDate.getMonth() + 1).padStart(2, '0'); // 月份加1并补零
+    const futureDay = String(futureDate.getDate()).padStart(2, '0'); // 补零
+    const futureDateString = `${futureYear}-${futureMonth}-${futureDay}`;
+
+    return futureDateString;
+}
+export function base64ToFile(base64, filename) {
+    // 移除Base64字符串中的元数据部分（如果有的话）
+    const matches = base64.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    if (!matches) {
+        console.error('Invalid input string');
+        throw new Error('Invalid input string');
+    }
+
+    const mimeType = matches[1];
+    const base64Data = matches[2];
+    console.log('mimeType:', mimeType)
+    // 将Base64字符串转换为字节数组
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+
+    // 创建Blob对象
+    const blob = new Blob([byteArray], { type: mimeType });
+
+    // 创建File对象（可选）
+    const file = new File([blob], filename, {
+        type: mimeType,
+        lastModified: Date.now()
+    });
+
+    // 生成对象URL（如果需要的话）
+    const url = URL.createObjectURL(file);
+    return {
+        file: file,
+        url: url
+    };
+}
+
+

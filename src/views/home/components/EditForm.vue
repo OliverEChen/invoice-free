@@ -12,23 +12,48 @@
       @finish="onFinish"
       @finishFailed="onFinishFailed"
     >
+      <!-- Basic Information -->
       <a-row :gutter="16">
         <a-col :span="12">
           <div class="flex f-a-center mg-b10">
             <div style="width: 4px; height: 12px; background: #db6d6d" class="mg-r5"></div>
             <div>Basic Information</div>
           </div>
-          <a-form-item label="Number" name="username">
-            <a-input v-model:value="formState.username" />
+          <a-form-item label="Number">
+            <a-input v-model:value="formState.number" />
           </a-form-item>
-          <a-form-item label="Date" name="username">
-            <a-date-picker v-model:value="value1" style="width: 100%" />
+          <a-form-item label="Date">
+            <a-date-picker
+              v-model:value="formState.date"
+              format="MMM DD,YYYY"
+              valueFormat="YYYY-MM-DD"
+              style="width: 100%"
+              @change="handleDateChange"
+            />
           </a-form-item>
-          <a-form-item label="Terms" name="username">
-            <a-input v-model:value="formState.username" />
+          <a-form-item label="Terms">
+            <a-select
+              ref="select"
+              v-model:value="formState.terms"
+              style="width: 100%"
+              @change="handleTermsChange"
+            >
+              <template v-for="item in termsOption" :key="item">
+                <a-select-option :value="item">{{ item }}</a-select-option>
+              </template>
+            </a-select>
           </a-form-item>
-          <a-form-item label="Due" name="username">
-            <a-date-picker v-model:value="value1" style="width: 100%" />
+          <a-form-item
+            label="Due"
+            v-if="formState.terms && !['None', 'On Receipt'].includes(formState.terms)"
+          >
+            <a-date-picker
+              v-model:value="formState.due"
+              format="MMM DD,YYYY"
+              valueFormat="YYYY-MM-DD"
+              style="width: 100%"
+              @change="handleDueChange"
+            />
           </a-form-item>
         </a-col>
         <a-col :span="12">
@@ -37,82 +62,84 @@
             <div>Logo</div>
           </div>
           <a-form-item label="" name="password">
-            <cus-upload />
+            <cus-upload @fileData="getFileData" />
           </a-form-item>
         </a-col>
       </a-row>
       <a-row :gutter="16">
+        <!-- From -->
         <a-col :span="12">
           <div class="flex f-a-center mg-b10">
             <div style="width: 4px; height: 12px; background: #db6d6d" class="mg-r5"></div>
             <div>From</div>
           </div>
-          <a-form-item label="Name" name="username">
-            <a-input v-model:value="formState.username" />
+          <a-form-item label="Name">
+            <a-input v-model:value="formState.fromName" placeholder="Bussiness Name" />
           </a-form-item>
-          <a-form-item label="Email" name="username">
-            <a-input v-model:value="formState.username" />
+          <a-form-item label="Email">
+            <a-input v-model:value="formState.fromEmail" placeholder="name@bussiness.com" />
           </a-form-item>
-          <a-form-item label="Address" name="username">
-            <a-input v-model:value="formState.username" class="mg-b10" />
-            <a-input v-model:value="formState.username" class="mg-b10" />
-            <a-input v-model:value="formState.username" />
+          <a-form-item label="Address">
+            <a-input v-model:value="formState.fromStreet" placeholder="Street" class="mg-b10" />
+            <a-input v-model:value="formState.fromCity" placeholder="City,State" class="mg-b10" />
+            <a-input v-model:value="formState.fromZipCode" placeholder="Zip code" />
           </a-form-item>
-          <a-form-item label="phone" name="username">
-            <a-input v-model:value="formState.username" />
+          <a-form-item label="phone">
+            <a-input v-model:value="formState.fromPhone" placeholder="(123)456789" />
           </a-form-item>
-          <a-form-item label="Bussiness Number" name="username">
-            <a-input v-model:value="formState.username" />
+          <a-form-item label="Bussiness Number">
+            <a-input v-model:value="formState.fromBusNumber" placeholder="123-456-789" />
           </a-form-item>
-          <a-form-item label="Website" name="username">
-            <a-input v-model:value="formState.username" />
+          <a-form-item label="Website">
+            <a-input v-model:value="formState.fromWebsite" placeholder="https://website.com" />
           </a-form-item>
-          <a-form-item label="Owner" name="username">
-            <a-input v-model:value="formState.username" />
+          <a-form-item label="Owner">
+            <a-input v-model:value="formState.fromOwner" placeholder="Bussiness Owner Name" />
           </a-form-item>
         </a-col>
+        <!-- Bill to -->
         <a-col :span="12">
           <div class="flex f-a-center mg-b10">
             <div style="width: 4px; height: 12px; background: #db6d6d" class="mg-r5"></div>
             <div>Bill to</div>
           </div>
-          <a-form-item label="Name" name="username">
-            <a-input v-model:value="formState.username" />
+          <a-form-item label="Name">
+            <a-input v-model:value="formState.toName" placeholder="Client Name" />
           </a-form-item>
-          <a-form-item label="Email" name="username">
-            <a-input v-model:value="formState.username" />
+          <a-form-item label="Email">
+            <a-input v-model:value="formState.toEmail" placeholder="name@client.com" />
           </a-form-item>
-          <a-form-item label="Address" name="username">
-            <a-input v-model:value="formState.username" class="mg-b10" />
-            <a-input v-model:value="formState.username" class="mg-b10" />
-            <a-input v-model:value="formState.username" />
+          <a-form-item label="Address">
+            <a-input v-model:value="formState.toStreet" placeholder="Street" class="mg-b10" />
+            <a-input v-model:value="formState.toCity" placeholder="City,State" class="mg-b10" />
+            <a-input v-model:value="formState.toZipCode" placeholder="Zip code" />
           </a-form-item>
-          <a-form-item label="Phone" name="username">
-            <a-input v-model:value="formState.username" />
+          <a-form-item label="Phone">
+            <a-input v-model:value="formState.toPhone" placeholder="(123)456789" />
           </a-form-item>
-          <a-form-item label="Mobile" name="username">
-            <a-input v-model:value="formState.username" />
+          <a-form-item label="Mobile">
+            <a-input v-model:value="formState.toMobile" placeholder="(123)456789" />
           </a-form-item>
-          <a-form-item label="Fax" name="username">
-            <a-input v-model:value="formState.username" />
+          <a-form-item label="Fax">
+            <a-input v-model:value="formState.toFax" placeholder="(123)456789" />
           </a-form-item>
         </a-col>
       </a-row>
-      <a-row class="currency">
-        <a-col :span="12">
-          <div class="flex f-a-center mg-r20">
+      <a-row class="currency mg-b20">
+        <a-col :span="4">
+          <div class="flex f-a-center mg-r20" style="height: 100%">
             <div style="width: 4px; height: 12px; background: #db6d6d" class="mg-r5"></div>
             <div>Items</div>
           </div>
         </a-col>
         <a-col :span="12">
-          <a-form-item label="Currency" :label-col="{ span: 8 }" name="username">
+          <a-form-item label="Currency" :label-col="{ span: 8 }">
             <a-select
               ref="select"
-              v-model:value="value1"
+              v-model:value="formState.currency"
               style="width: 100%"
               @focus="focus"
-              @change="handleChange"
+              @change="handleCurrencyChange"
             >
               <a-select-option value="jack">Jack</a-select-option>
               <a-select-option value="lucy">Lucy</a-select-option>
@@ -121,6 +148,7 @@
           </a-form-item>
         </a-col>
       </a-row>
+      <!-- Items -->
       <div>
         <a-row :gutter="8">
           <a-col :span="8">Description</a-col>
@@ -130,33 +158,51 @@
           <a-col :span="8"></a-col>
         </a-row>
         <div style="border: 1px solid #ccc; width: 100%" class="mg-t10 mg-b10"></div>
-        <div v-for="(item, index) in itemList" :key="index">
+        <div v-for="(item, index) in formState.invoiceItems" :key="index">
           <a-row :gutter="8">
             <a-col :span="8">
-              <a-input
-                v-model:value="value2"
-                placeholder="Autosize height with minimum and maximum number of lines"
+              <a-input v-model:value="item.description" placeholder="Item Description"
             /></a-col>
             <a-col :span="3">
-              <a-input-number id="inputNumber" v-model:value="value" :min="1" />
+              <a-input-number
+                id="inputNumber"
+                v-model:value="item.unitCost"
+                :precision="2"
+                :min="1"
+                @change="handleItemAmount(item)"
+              />
             </a-col>
             <a-col :span="3">
-              <a-input-number id="inputNumber" v-model:value="value" :min="1" />
+              <a-input-number
+                id="inputNumber"
+                v-model:value="item.quantity"
+                :min="1"
+                @change="handleItemAmount(item)"
+              />
             </a-col>
-            <a-col :span="2">$ 12.99</a-col>
+            <a-col :span="2">
+              <div style="height: 100%" class="flex f-a-center">$ {{ item.amount }}</div>
+            </a-col>
             <a-col :span="8">
-              <ArrowUpOutlined style="font-size: 24px" class="mg-r20" />
-              <a-button type="primary" @click="onDeleteItem(index)" danger>
-                <template #icon>
-                  <DeleteOutlined />
-                </template>
-                Delete
-              </a-button>
+              <ArrowUpOutlined
+                style="font-size: 24px"
+                class="mg-r20 arrow-up"
+                @click="handleBubbleUp(index)"
+              />
+              <a-popconfirm
+                title="Are you sure delete this record?"
+                ok-text="Yes"
+                cancel-text="No"
+                @confirm="onDeleteItem(index)"
+                @cancel="cancel"
+              >
+                <a-button type="primary" danger :icon="h(DeleteOutlined)"> Delete </a-button>
+              </a-popconfirm>
             </a-col>
             <a-col :span="8" class="mg-t10">
               <a-textarea
-                v-model:value="value2"
-                placeholder="Autosize height with minimum and maximum number of lines"
+                v-model:value="item.addDetails"
+                placeholder="Additional details"
                 :auto-size="{ minRows: 2, maxRows: 5 }"
             /></a-col>
           </a-row>
@@ -172,38 +218,40 @@
         <a-row>
           <a-col :span="12"></a-col>
           <a-col :span="12">
-            <a-form-item label="Subtotal" name="username"> $ 256 </a-form-item>
-            <a-form-item label="Tax %" name="username">
+            <a-form-item label="Subtotal"> $ {{ formState.subTotal }} </a-form-item>
+            <a-form-item label="Tax %">
               <div class="flex f-a-center">
-                <a-input-number v-model:value="formState.username" />
+                <a-input-number v-model:value="formState.tax" :precision="2" :max="100" :min="0" />
                 <span class="mg-l10">%</span>
               </div>
             </a-form-item>
-            <a-form-item label="Discount" name="username">
-              <a-input-number v-model:value="formState.username" />
+            <a-form-item label="Discount">
+              <a-input-number v-model:value="formState.discount" :precision="2" :min="0" />
             </a-form-item>
-            <a-form-item label="Shipping Fee" name="username">
-              <a-input-number v-model:value="formState.username" />
+            <a-form-item label="Shipping Fee">
+              <a-input-number v-model:value="formState.shippingFee" :precision="2" :min="0" />
             </a-form-item>
-            <a-form-item label="Total" name="username"> $ 256 </a-form-item>
+            <a-form-item label="Total"> $ {{ formState.total }} </a-form-item>
           </a-col>
         </a-row>
       </div>
+      <!-- Notes -->
       <a-row>
         <a-col :span="24">
           <div class="flex f-a-center mg-b10">
             <div style="width: 4px; height: 12px; background: #db6d6d" class="mg-r5"></div>
             <div>Notes</div>
           </div>
-          <a-form-item name="username" :wrapperCol="{ span: 24 }">
+          <a-form-item :wrapperCol="{ span: 24 }">
             <a-textarea
-              v-model:value="value1"
-              placeholder="Autosize height based on content lines"
+              v-model:value="formState.notes"
+              placeholder="Notes - any relevant information not covered, additional terms and conditions"
               :auto-size="{ minRows: 3 }"
             />
           </a-form-item>
         </a-col>
       </a-row>
+      <!-- Signature -->
       <a-row>
         <a-col :span="24">
           <div class="flex f-a-center mg-b10">
@@ -219,7 +267,7 @@
           <div v-else>
             <div>
               <a-image :width="200" :src="imgData" />
-              <p>{{ signTime }}</p>
+              <p>{{ dayjs(formState.signedOn).format('MMM DD, YYYY') }}</p>
             </div>
             <div>
               <a-button type="primary" @click="onEditSignature" class="mg-r10">
@@ -267,7 +315,7 @@
                 </div>
               </div>
             </template>
-            <CusUpload />
+            <CusUpload @fileData="getPhotoData"/>
           </div>
         </a-col>
       </a-row>
@@ -291,18 +339,156 @@ import CusUpload from '@/components/upload/CusUpload.vue'
 import MyVueSignature from '@/components/myVueSignaturePad/index.vue'
 import EditPhotoDetail from './EditPhotoDetail.vue'
 import { formatDateWithMonth } from '@/utils/utils'
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch, h } from 'vue'
+import dayjs, { Dayjs } from 'dayjs'
+import { addDaysToDate, base64ToFile } from '@/utils/utils'
+import { message } from 'ant-design-vue'
+import {uploadApi} from '@/api/http'
+const termsOption = [
+  'None',
+  'Custom',
+  'On Receipt',
+  'Next Day',
+  '2 Days',
+  '3 Days',
+  '4 Days',
+  '5 Days',
+  '6 Days',
+  '7 Days',
+  '10 Days',
+  '14 Days',
+  '21 Days',
+  '30 Days',
+  '45 Days',
+  '60 Days',
+  '90 Days',
+  '180 Days',
+  '365 Days',
+]
 const formState = reactive({
-  username: '',
-  password: '',
-  remember: true,
+  number: '',
+  date: dayjs().format('YYYY-MM-DD'),
+  terms: 'On Receipt',
+  due: '',
+  fromName: '',
+  fromEmail: '',
+  fromStreet: '',
+  fromCity: '',
+  fromZipCode: '',
+  fromPhone: '',
+  fromBusNumber: '',
+  fromWebsite: '',
+  fromOwner: '',
+  toName: '',
+  toEmail: '',
+  toStreet: '',
+  toCity: '',
+  toZipCode: '',
+  toPhone: '',
+  toMobile: '',
+  toFax: '',
+  currency: '',
+  subTotal: 0.0,
+  tax: null,
+  discount: null,
+  shippingFee: null,
+  total: null,
+  notes: '',
+  signatureId: null,
+  signedOn: '',
+  invoiceItems: [
+    {
+      description: '',
+      addDetails: '',
+      quantity: 0,
+      amount: '',
+      seq: '',
+      unitCost: 0,
+    },
+  ],
+  invoicePhotos: [
+    {
+      description: '',
+      addDetails: '',
+      photoId: '',
+    },
+  ],
 })
 const PhotoList = reactive([1, 2])
-let itemList = reactive([{}])
 const imgData = ref(null)
 const signTime = ref('')
 const myVueSignature = ref(null)
 const editPhotoDetail = ref(null)
+watch(
+  () => formState.invoiceItems,
+  (newVal) => {
+    let sum = 0
+    newVal.forEach((item) => {
+      sum += item.amount
+    })
+    formState.subTotal = sum
+  },
+  { deep: true },
+)
+watch(
+  [
+    () => formState.subTotal,
+    () => formState.tax,
+    () => formState.discount,
+    () => formState.shippingFee,
+  ],
+  (newVal) => {
+    // Total = subtotal + subtotal * tax - discount + sheeping fee
+    formState.total = newVal[0] + (newVal[0] * (newVal[1] / 100) - newVal[2]) + newVal[3]
+  },
+)
+
+const handleItemAmount = (item) => {
+  item.amount = item.quantity * item.unitCost
+}
+const handleBubbleUp = (index) => {
+  if (index > 0) {
+    const temp = formState.invoiceItems[index]
+    formState.invoiceItems[index] = formState.invoiceItems[index - 1]
+    formState.invoiceItems[index - 1] = temp
+  }
+}
+const getFileData = (data) => {
+  formState.logoId = data.id
+}
+const getPhotoData = (data) => {
+  const obj = {
+    photoId: data.id,
+    description: '',
+    addDetails: '',
+  }
+  editPhotoDetail.value.showModal('edit', obj)
+}
+const handleTermsChange = (val) => {
+  console.log('val', val)
+  if (val === 'Custom') {
+    formState.due = dayjs().format('YYYY-MM-DD')
+  } else if (val === 'On Receipt') {
+    formState.due = dayjs().format('YYYY-MM-DD')
+  } else if (val.includes('Day')) {
+    let days = val.split(' ')[0]
+    if (days === 'Next') {
+      days = 1
+    } else {
+      days = parseInt(days)
+    }
+    formState.due = addDaysToDate(formState.date, days)
+    console.log('addDaysToDate(formState.date, days)', addDaysToDate(formState.date, days))
+  }
+}
+const handleDueChange = (val) => {
+  console.log('handleDueChange', val)
+  formState.terms = 'Custom'
+}
+const handleDateChange = (val) => {
+  console.log('handleDateChange', val)
+  handleTermsChange(formState.terms)
+}
 const onEditPhotoDetail = (item) => {
   editPhotoDetail.value.showModal('edit', item)
 }
@@ -310,14 +496,34 @@ const onDeletePhoto = (index) => {
   PhotoList.splice(index, 1)
 }
 const onAddItem = () => {
-  itemList.push({})
+  formState.invoiceItems.push({
+    description: '',
+    addDetails: '',
+    quantity: 0,
+    amount: '',
+    seq: '',
+    unitCost: 0,
+  })
 }
 const onDeleteItem = (index) => {
-  itemList.splice(index, 1)
+  formState.invoiceItems.splice(index, 1)
 }
 const getImgData = (data) => {
   console.log('getImgData', data)
+  const {file} = base64ToFile(data, `signature${Date.now()}.png`)
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('dir', 'signature')
+  uploadApi('/api/v1/ossFile/uploadImage', formData)
+    .then((res) => {
+      console.log('res', res)
+      message.success('upload successfully.')
+    })
+    .catch((err) => {
+      message.error('upload failed.')
+    })
   imgData.value = data
+  formState.signedOn = dayjs().format('YYYY-MM-DD')
   signTime.value = 'Signed on:' + formatDateWithMonth()
 }
 const onOpenSignature = () => {
@@ -338,6 +544,9 @@ const onFinishFailed = (errorInfo) => {
 }
 </script>
 <style lang="scss" scoped>
+.arrow-up:active {
+  color: #ccc;
+}
 .form-wrap {
   position: relative;
   border: 1px solid #000;

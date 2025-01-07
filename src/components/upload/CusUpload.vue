@@ -2,12 +2,11 @@
   <div class="cus-upload">
     <a-upload
       v-model:file-list="fileList"
-      name="avatar"
       list-type="picture-card"
       class="avatar-uploader"
       :show-upload-list="false"
-      action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
       :before-upload="beforeUpload"
+      :custom-request="customRequest"
       @change="handleChange"
     >
       <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
@@ -22,9 +21,10 @@
 <script setup>
 import LoadingOutlined from '@ant-design/icons-vue/LoadingOutlined'
 import PlusOutlined from '@ant-design/icons-vue/PlusOutlined'
-
-import { ref } from 'vue'
+import { ref, h } from 'vue';
 import { message } from 'ant-design-vue'
+import { uploadApi } from '@/api/http'
+const emit = defineEmits(['fileData'])
 function getBase64(img, callback) {
   const reader = new FileReader()
   reader.addEventListener('load', () => callback(reader.result))
@@ -54,12 +54,46 @@ const beforeUpload = (file) => {
   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
   if (!isJpgOrPng) {
     message.error('You can only upload JPG file!')
+    return
   }
-  const isLt2M = file.size / 1024 / 1024 < 20
+  const isLt2M = file.size / 1024 / 1024 < 10
   if (!isLt2M) {
-    message.error('Image must smaller than 20MB!')
+    message.error('Image must smaller than 10MB!')
+    return
   }
   return isJpgOrPng && isLt2M
+}
+const onUploadProgress = (ev, onProgress) => {
+      // ev - axios 上传进度实例，上传过程触发多次
+      // ev.loaded 当前已上传内容的大小，ev.total - 本次上传请求内容总大小
+      console.log(ev);
+      const percent = (ev.loaded / ev.total) * 100;
+      // 计算出上传进度，调用组件进度条方法
+      onProgress({ percent });
+    }
+const customRequest = ({ file, onProgress, onSuccess, onError }) => {
+  const formData = new FormData()
+  // fileList.value.forEach(file => {
+  //   formData.append('files[]', file);
+  // });
+  console.log('file', file)
+  formData.append('file', file)
+  formData.append('dir', 'logo')
+  loading.value = true
+  // You can use any AJAX library you like
+  uploadApi('/api/v1/ossFile/uploadImage', formData, (ev) => onUploadProgress(ev, onProgress))
+    .then((res) => {
+      fileList.value = []
+      loading.value = false
+      onSuccess()
+      message.success('upload successfully.')
+      emit('fileData', res.data)
+    })
+    .catch((err) => {
+      loading.value = false
+      onError()
+      message.error('upload failed.')
+    })
 }
 </script>
 <style lang="scss">
@@ -68,6 +102,10 @@ const beforeUpload = (file) => {
   height: 128px;
 }
 .avatar-uploader > .ant-upload {
+  width: 100%;
+  height: 100%;
+}
+img {
   width: 100%;
   height: 100%;
 }
