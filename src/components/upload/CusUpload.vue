@@ -9,7 +9,7 @@
       :custom-request="customRequest"
       @change="handleChange"
     >
-      <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
+      <img v-if="isAvatar && imageUrl" :src="imageUrl" alt="avatar" />
       <div v-else>
         <loading-outlined v-if="loading"></loading-outlined>
         <plus-outlined v-else></plus-outlined>
@@ -25,6 +25,16 @@ import { ref, h } from 'vue';
 import { message } from 'ant-design-vue'
 import { uploadApi } from '@/api/http'
 const emit = defineEmits(['fileData'])
+const {isAvatar} = defineProps({
+  isAvatar: {
+    type: Boolean,
+    default: true
+  },
+  imageUrl: {
+    type: String,
+    default: ''
+  }
+})
 function getBase64(img, callback) {
   const reader = new FileReader()
   reader.addEventListener('load', () => callback(reader.result))
@@ -32,7 +42,6 @@ function getBase64(img, callback) {
 }
 const fileList = ref([])
 const loading = ref(false)
-const imageUrl = ref('')
 const handleChange = (info) => {
   if (info.file.status === 'uploading') {
     loading.value = true
@@ -40,14 +49,14 @@ const handleChange = (info) => {
   }
   if (info.file.status === 'done') {
     // Get this url from response in real world.
-    getBase64(info.file.originFileObj, (base64Url) => {
-      imageUrl.value = base64Url
-      loading.value = false
-    })
+    // getBase64(info.file.originFileObj, (base64Url) => {
+    //   imageUrl.value = base64Url
+    //   loading.value = false
+    // })
   }
   if (info.file.status === 'error') {
     loading.value = false
-    message.error('upload error')
+    // message.error('upload error')
   }
 }
 const beforeUpload = (file) => {
@@ -90,6 +99,7 @@ const customRequest = ({ file, onProgress, onSuccess, onError }) => {
       emit('fileData', res.data)
     })
     .catch((err) => {
+      console.log('error', err)
       loading.value = false
       onError()
       message.error('upload failed.')

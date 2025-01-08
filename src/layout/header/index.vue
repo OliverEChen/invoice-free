@@ -21,15 +21,25 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onBeforeMount } from 'vue'
+import { reactive, ref, watch, watchEffect } from 'vue'
 import router from '@/router'
 import { useUserStore } from '@/store/modules/user'
 const email = useUserStore().userInfo
 const selectedKeys = ref(['/home'])
-onBeforeMount(() => {
-  const path = router.currentRoute.value.path
-  selectedKeys.value = [path]
+
+// 监听当前路由路径的变化
+// watch(
+//   () => router.currentRoute.value.path,
+//   (newPath, oldPath) => {
+//     selectedKeys.value = [newPath]
+//     console.log(`Current path changed from ${oldPath} to ${newPath}`)
+//   },
+//   { immediate: true },
+// )
+watchEffect(() => {
+  selectedKeys.value = [router.currentRoute.value.path]
 })
+
 const menuList = reactive([
   { title: 'Invoice Generator', path: '/home' },
   { title: 'Invoice List', path: '/invoice-list' },

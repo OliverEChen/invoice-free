@@ -8,15 +8,16 @@
               <a-col :span="12">
                 <a-form layout="inline" :model="formState" class="mg-b20">
                   <a-form-item>
-                    <a-input v-model:value="formState.fieldB" placeholder="input client name" />
+                    <a-input v-model:value="formState.toName" placeholder="input client name" />
                   </a-form-item>
-                  <a-form-item>
-                    <a-button type="primary">Search</a-button>
-                  </a-form-item>
+                  <Space>
+                    <a-button type="primary" @click="handleSearch">Search</a-button>
+                    <a-button @click="handleReset">Reset</a-button>
+                  </Space>
                 </a-form>
               </a-col>
               <a-col :span="12" class="t-align-r">
-                <a-button type="primary">
+                <a-button type="primary" @click="toNewInvoice">
                   <template #icon>
                     <PlusOutlined />
                   </template>
@@ -25,7 +26,13 @@
               </a-col>
             </a-row>
 
-            <a-table :columns="columns" :data-source="data">
+            <a-table
+              :columns="columns"
+              :data-source="tableData"
+              :pagination="{
+                total,
+              }"
+            >
               <template #bodyCell="{ column, record }">
                 <template v-if="column.key === 'paid'">
                   <a>
@@ -75,9 +82,11 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, createVNode, h } from 'vue'
-import { Modal } from 'ant-design-vue'
+import { reactive, ref, createVNode, h, onMounted } from 'vue'
+import { Modal, Space } from 'ant-design-vue'
 import { ExclamationCircleOutlined, MoreOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import { get } from '@/api/http'
+import router from '@/router'
 const activeKey = ref('Invoice List')
 const tabList = reactive(['Invoice List'])
 const markPaidItems = reactive([
@@ -90,57 +99,63 @@ const markPaidItems = reactive([
   'Other',
 ])
 const formState = reactive({
-  fieldA: '',
-  fieldB: '',
+  toName: '',
 })
 const columns = [
   {
     title: 'Invoice',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'number',
+    key: 'number',
   },
   {
     title: 'Client',
-    dataIndex: 'age',
-    key: 'age',
+    dataIndex: 'toName',
+    key: 'toName',
   },
   {
     title: 'Paid',
-    dataIndex: 'paid',
-    key: 'paid',
+    dataIndex: 'paidType',
+    key: 'paidType',
   },
   {
     title: 'Date',
-    key: 'tags',
-    dataIndex: 'tags',
+    key: 'date',
+    dataIndex: 'date',
   },
   {
     title: 'Balance Due',
-    key: 'tags',
-    dataIndex: 'tags',
+    key: 'balanceDue',
+    dataIndex: 'balanceDue',
   },
   {
     title: 'Action',
     key: 'action',
   },
 ]
-
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    paid: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    paid: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-  },
-]
+const total = ref(0)
+const tableData = ref([])
+onMounted(() => {
+  getInvoiceList()
+})
+const getInvoiceList = async () => {
+  const { code, data } = await get('/api/v1/invoice/list', {
+    toName: formState.toName
+  })
+  if (code === '00000') {
+    total.value = data.total
+    tableData.value = data.list
+  }
+}
+const toNewInvoice = () => {
+  router.push('/home')
+}
+const handleSearch = () => {
+  getInvoiceList()
+}
+const handleReset = () => {
+  formState.toName = ''
+  getInvoiceList()
+}
 const onPrint = () => {
   window.print()
 }

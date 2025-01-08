@@ -13,11 +13,11 @@
         <a-image
           :width="200"
           class="mg-b10"
-          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+          :src="formData.photoUrl"
         />
         <a-input v-model:value="formData.description" placeholder="Description" class="mg-b10" />
         <a-textarea
-          v-model:value="formData.additional"
+          v-model:value="formData.addDetails"
           placeholder="Additional description"
           :auto-size="{ minRows: 2 }"
         />
@@ -29,19 +29,17 @@
 import { ref, defineEmits, reactive } from 'vue'
 const open = ref(false)
 const formData = reactive({})
-const emit = defineEmits(['imgData'])
-const showModal = (flag) => {
+const emit = defineEmits(['photoData'])
+const showModal = (obj) => {
   open.value = true
-  if (flag !== 'edit') {
-    imgData.value = null
-  }
+  Object.assign(formData, obj)
 }
 const handleCancel = (e) => {
   open.value = false
 }
 const save = () => {
   open.value = false
-  emit('imgData', imgData.value)
+  emit('photoData', formData)
 }
 defineExpose({ showModal })
 </script>

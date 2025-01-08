@@ -4,7 +4,7 @@ export function post(url, data){
     return request.post(url, data)
 }
 export function get(url, params){
-    return request.get(url, params)
+    return request.get(url, {params})
 }
 export function uploadApi(url, data, onUploadProgress){
     return request({

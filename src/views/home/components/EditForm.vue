@@ -4,13 +4,11 @@
       style="height: 8px; width: 100%; background: #db6d6d; position: absolute; top: 0; left: 0"
     ></div>
     <a-form
+      ref="formRef"
       :model="formState"
-      name="basic"
       :label-col="{ span: 6 }"
       :wrapper-col="{ span: 18 }"
       autocomplete="off"
-      @finish="onFinish"
-      @finishFailed="onFinishFailed"
     >
       <!-- Basic Information -->
       <a-row :gutter="16">
@@ -62,7 +60,7 @@
             <div>Logo</div>
           </div>
           <a-form-item label="" name="password">
-            <cus-upload @fileData="getFileData" />
+            <cus-upload :image-url="formState.logoUrl" @fileData="getFileData" />
           </a-form-item>
         </a-col>
       </a-row>
@@ -138,7 +136,6 @@
               ref="select"
               v-model:value="formState.currency"
               style="width: 100%"
-              @focus="focus"
               @change="handleCurrencyChange"
             >
               <a-select-option value="jack">Jack</a-select-option>
@@ -258,7 +255,7 @@
             <div style="width: 4px; height: 12px; background: #db6d6d" class="mg-r5"></div>
             <div>Signature</div>
           </div>
-          <a-button type="primary" @click="onOpenSignature" v-if="imgData === null">
+          <a-button type="primary" @click="onOpenSignature" v-if="formState.signatureUrl === ''">
             <template #icon>
               <PlusOutlined />
             </template>
@@ -266,7 +263,7 @@
           </a-button>
           <div v-else>
             <div>
-              <a-image :width="200" :src="imgData" />
+              <a-image :width="200" :src="formState.signatureUrl" />
               <p>{{ dayjs(formState.signedOn).format('MMM DD, YYYY') }}</p>
             </div>
             <div>
@@ -286,21 +283,21 @@
           </div>
         </a-col>
       </a-row>
-      <a-row>
+      <a-row class="mg-t20">
         <a-col :span="24">
           <div class="flex f-a-center mg-b10">
             <div style="width: 4px; height: 12px; background: #db6d6d" class="mg-r5"></div>
             <div>Photos</div>
           </div>
           <div class="flex f-wrap">
-            <template v-for="(item, index) in PhotoList">
+            <template v-for="(item, index) in formState.invoicePhotos">
               <div class="mg-r10 mg-b10" style="width: 100px">
                 <a-image
                   :width="100"
-                  src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+                  :src="item.photoUrl"
                 />
-                <div class="f18 t_ellipsis">Description</div>
-                <div class="t_ellipsis2">Additional Detailsscscsdcscwdqwdqwdqwdq wdwef</div>
+                <div class="f18 t_ellipsis">{{ item.description }}</div>
+                <div class="t_ellipsis2">{{ item.addDetails }}</div>
                 <div>
                   <a-button type="primary" class="mg-r10" @click="onEditPhotoDetail(item)">
                     <template #icon>
@@ -315,18 +312,18 @@
                 </div>
               </div>
             </template>
-            <CusUpload @fileData="getPhotoData"/>
+            <CusUpload :isAvatar="false" @fileData="getPhotoData"/>
           </div>
         </a-col>
       </a-row>
     </a-form>
   </div>
   <a-space class="mg-t30">
-    <a-button type="primary" html-type="submit" style="padding: 0 30px">Save</a-button>
-    <a-button style="padding: 0 30px">Clear</a-button>
+    <a-button type="primary" html-type="submit" style="padding: 0 30px" @click="onSave">Save</a-button>
+    <a-button style="padding: 0 30px" @click="onClear">Clear</a-button>
   </a-space>
-  <MyVueSignature ref="myVueSignature" @imgData="getImgData" />
-  <EditPhotoDetail ref="editPhotoDetail" />
+  <MyVueSignature ref="myVueSignature" @signatureData="getSignatureData" />
+  <EditPhotoDetail ref="editPhotoDetail" @photoData="getPhotoDataDetail"/>
 </template>
 <script setup>
 import {
@@ -343,7 +340,8 @@ import { reactive, ref, watch, h } from 'vue'
 import dayjs, { Dayjs } from 'dayjs'
 import { addDaysToDate, base64ToFile } from '@/utils/utils'
 import { message } from 'ant-design-vue'
-import {uploadApi} from '@/api/http'
+import {uploadApi, post} from '@/api/http'
+import {cloneDeep} from 'lodash'
 const termsOption = [
   'None',
   'Custom',
@@ -365,11 +363,13 @@ const termsOption = [
   '180 Days',
   '365 Days',
 ]
-const formState = reactive({
+const initialFormData = {
   number: '',
   date: dayjs().format('YYYY-MM-DD'),
   terms: 'On Receipt',
   due: '',
+  logoId: null,
+  logoUrl: '',
   fromName: '',
   fromEmail: '',
   fromStreet: '',
@@ -395,28 +395,13 @@ const formState = reactive({
   total: null,
   notes: '',
   signatureId: null,
+  signatureUrl: '',
   signedOn: '',
-  invoiceItems: [
-    {
-      description: '',
-      addDetails: '',
-      quantity: 0,
-      amount: '',
-      seq: '',
-      unitCost: 0,
-    },
-  ],
-  invoicePhotos: [
-    {
-      description: '',
-      addDetails: '',
-      photoId: '',
-    },
-  ],
-})
-const PhotoList = reactive([1, 2])
-const imgData = ref(null)
-const signTime = ref('')
+  invoiceItems: [],
+  invoicePhotos: [],
+}
+const formState = reactive(cloneDeep(initialFormData))
+const formRef = ref(null)
 const myVueSignature = ref(null)
 const editPhotoDetail = ref(null)
 watch(
@@ -442,7 +427,22 @@ watch(
     formState.total = newVal[0] + (newVal[0] * (newVal[1] / 100) - newVal[2]) + newVal[3]
   },
 )
+const onSave = async () => {
+  const {code} = await post('/api/v1/invoice/save', formState)
+  if(code === '00000'){
+    message.success('Save invoice successfully!')
+  }else {
+    message.error('Save invoice failed!')
+  }
+}
+const onClear = () => {
+  Object.assign(formState,cloneDeep(initialFormData))
+  console.log('Clear invoice successfully', formState)
 
+}
+const handleCurrencyChange = (val) => {
+  formState.currency = val
+}
 const handleItemAmount = (item) => {
   item.amount = item.quantity * item.unitCost
 }
@@ -454,15 +454,26 @@ const handleBubbleUp = (index) => {
   }
 }
 const getFileData = (data) => {
+  formState.logoUrl = data.path
   formState.logoId = data.id
 }
 const getPhotoData = (data) => {
   const obj = {
+    photoUrl: data.path,
     photoId: data.id,
     description: '',
     addDetails: '',
   }
-  editPhotoDetail.value.showModal('edit', obj)
+  editPhotoDetail.value.showModal(obj)
+}
+const getPhotoDataDetail = (data) => {
+  const obj = {
+    photoUrl: data.photoUrl,
+    photoId: data.id,
+    description: data.description,
+    addDetails: data.addDetails,
+  }
+  formState.invoicePhotos.push(obj)
 }
 const handleTermsChange = (val) => {
   console.log('val', val)
@@ -493,7 +504,7 @@ const onEditPhotoDetail = (item) => {
   editPhotoDetail.value.showModal('edit', item)
 }
 const onDeletePhoto = (index) => {
-  PhotoList.splice(index, 1)
+  formState.invoicePhotos.splice(index, 1)
 }
 const onAddItem = () => {
   formState.invoiceItems.push({
@@ -508,8 +519,7 @@ const onAddItem = () => {
 const onDeleteItem = (index) => {
   formState.invoiceItems.splice(index, 1)
 }
-const getImgData = (data) => {
-  console.log('getImgData', data)
+const getSignatureData = (data) => {
   const {file} = base64ToFile(data, `signature${Date.now()}.png`)
   const formData = new FormData()
   formData.append('file', file)
@@ -517,14 +527,15 @@ const getImgData = (data) => {
   uploadApi('/api/v1/ossFile/uploadImage', formData)
     .then((res) => {
       console.log('res', res)
+      formState.signatureId = res.data.id
+      formState.signatureUrl = res.data.path
+      formState.signedOn = dayjs().format('YYYY-MM-DD')
+
       message.success('upload successfully.')
     })
     .catch((err) => {
       message.error('upload failed.')
     })
-  imgData.value = data
-  formState.signedOn = dayjs().format('YYYY-MM-DD')
-  signTime.value = 'Signed on:' + formatDateWithMonth()
 }
 const onOpenSignature = () => {
   console.log(myVueSignature.value)
@@ -534,13 +545,9 @@ const onEditSignature = () => {
   myVueSignature.value.showModal('edit')
 }
 const onDeleteSignature = () => {
-  imgData.value = null
-}
-const onFinish = (values) => {
-  console.log('Success:', values)
-}
-const onFinishFailed = (errorInfo) => {
-  console.log('Failed:', errorInfo)
+  formState.signatureId = null
+  formState.signatureUrl = ''
+  formState.signedOn = ''
 }
 </script>
 <style lang="scss" scoped>

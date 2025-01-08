@@ -30,12 +30,12 @@
 import { ref, defineEmits } from 'vue'
 const open = ref(false)
 const signaturePad = ref(null)
-const imgData = ref(null)
-const emit = defineEmits(['imgData'])
+const signatureData = ref(null)
+const emit = defineEmits(['signatureData'])
 const showModal = (flag) => {
   open.value = true
   if (flag !== 'edit') {
-    imgData.value = null
+    signatureData.value = null
     signaturePad.value && signaturePad.value.clearSignature()
   }
 }
@@ -52,9 +52,9 @@ const save = () => {
   const { isEmpty, data } = signaturePad.value.saveSignature()
   console.log(isEmpty)
   console.log(data)
-  imgData.value = data
+  signatureData.value = data
   open.value = false
-  emit('imgData', imgData.value)
+  emit('signatureData', signatureData.value)
 }
 defineExpose({ showModal })
 </script>
