@@ -6,6 +6,7 @@
       border: 1px solid #000;
       box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
       padding: 28px 20px 20px;
+      line-height: 1.5;
     "
   >
     <div
@@ -15,14 +16,14 @@
       <div style="display: flex; align-items: center">
         <img
           style="width: 100px; height: 100px; margin-right: 20px"
-          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+          :src="invoiceData?.logoUrl"
         />
         <div>
           <div style="font-weight: 500; font-size: 18px">百度</div>
           <div>yanhong li</div>
           <div>
             <span style="font-weight: 500">Business Number</span>
-            16116ad6649449
+            <span style="margin-left: 10px;">{{ invoiceData?.fromBusNumber }}</span>
           </div>
           <div>东川路500号</div>
           <div>上海</div>
@@ -121,10 +122,10 @@
         <div style="page-break-inside: avoid;">
           <img
             style="width: 100px; height: 100px; margin-right: 20px"
-            src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+            :src="invoiceData.signatureUrl"
           />
           <div style="font-weight: 500">DATE SIGNED</div>
-          <div>Dec 1, 2024</div>
+          <div>{{ invoiceData.signedOn && dayjs(invoiceData.signedOn).format('MMM DD, YYYY') }}</div>
         </div>
       </div>
     </div>
@@ -139,8 +140,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, h } from 'vue'
+import { ref, reactive, onMounted, h, onBeforeMount } from 'vue';
+import {useUserStore} from '@/store/modules/user'
+import { storeToRefs } from 'pinia'
+import dayjs, { Dayjs } from 'dayjs'
+
+const userStore = useUserStore()
+const {invoiceData} = storeToRefs(userStore)
+
 const items = reactive([1, 2, 3])
 const photos = reactive([1,2])
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+</style>

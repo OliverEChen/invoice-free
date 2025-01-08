@@ -59,7 +59,7 @@
             <div style="width: 4px; height: 12px; background: #db6d6d" class="mg-r5"></div>
             <div>Logo</div>
           </div>
-          <a-form-item label="" name="password">
+          <a-form-item label="">
             <cus-upload :image-url="formState.logoUrl" @fileData="getFileData" />
           </a-form-item>
         </a-col>
@@ -334,14 +334,16 @@ import {
 } from '@ant-design/icons-vue/lib/icons'
 import CusUpload from '@/components/upload/CusUpload.vue'
 import MyVueSignature from '@/components/myVueSignaturePad/index.vue'
-import EditPhotoDetail from './EditPhotoDetail.vue'
-import { formatDateWithMonth } from '@/utils/utils'
-import { reactive, ref, watch, h } from 'vue'
+import EditPhotoDetail from './components/EditPhotoDetail.vue'
+import {onBeforeRouteLeave } from 'vue-router'
+import { reactive, ref, watch, h, onMounted } from 'vue';
 import dayjs, { Dayjs } from 'dayjs'
 import { addDaysToDate, base64ToFile } from '@/utils/utils'
 import { message } from 'ant-design-vue'
 import {uploadApi, post} from '@/api/http'
 import {cloneDeep} from 'lodash'
+import {useUserStore} from '@/store/modules/user'
+import { storeToRefs } from 'pinia'
 const termsOption = [
   'None',
   'Custom',
@@ -400,10 +402,16 @@ const initialFormData = {
   invoiceItems: [],
   invoicePhotos: [],
 }
+const userStore = useUserStore()
+const {invoiceData} = storeToRefs(userStore)
+
 const formState = reactive(cloneDeep(initialFormData))
 const formRef = ref(null)
 const myVueSignature = ref(null)
 const editPhotoDetail = ref(null)
+onMounted(() => {
+  Object.assign(formState,invoiceData.value)
+})
 watch(
   () => formState.invoiceItems,
   (newVal) => {
@@ -427,6 +435,14 @@ watch(
     formState.total = newVal[0] + (newVal[0] * (newVal[1] / 100) - newVal[2]) + newVal[3]
   },
 )
+onBeforeRouteLeave((to, from) => {
+  userStore.setInvoiceData(formState)
+  // const answer = window.confirm(
+  //   'Do you really want to leave? you have unsaved changes!'
+  // )
+  // // 取消导航并停留在同一页面上
+  // if (!answer) return false
+})
 const onSave = async () => {
   const {code} = await post('/api/v1/invoice/save', formState)
   if(code === '00000'){

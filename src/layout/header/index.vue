@@ -37,7 +37,11 @@ const selectedKeys = ref(['/home'])
 //   { immediate: true },
 // )
 watchEffect(() => {
-  selectedKeys.value = [router.currentRoute.value.path]
+  let path = router.currentRoute.value.path
+  if(path.startsWith('/home')){
+    path = '/home'
+  }
+  selectedKeys.value = [path]
 })
 
 const menuList = reactive([

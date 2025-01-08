@@ -3,10 +3,15 @@ export const useUserStore = defineStore('user', {
     state: () => {
         return {
             token: localStorage.getItem('TOKEN'),
-            userInfo: {}
+            userInfo: {},
+            invoiceData: localStorage.getItem('invoice_data') ? JSON.parse(localStorage.getItem('invoice_data')) : {}
         }
     },
     actions: {
+        setInvoiceData(data) {
+            this.invoiceData = data
+            localStorage.setItem('invoice_data', JSON.stringify(data))
+        },
         setToken(token) {
             this.token = token
             localStorage.setItem('TOKEN', token)
@@ -16,9 +21,8 @@ export const useUserStore = defineStore('user', {
         },
         logout() {
             return new Promise((resolve, reject) => {
-                this.token = ''
-                localStorage.removeItem('TOKEN')
-                this.userInfo = {}
+                localStorage.clear()
+                this.$reset()
                 resolve()
             })
         }

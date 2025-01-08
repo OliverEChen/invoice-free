@@ -20,12 +20,65 @@ const router = createRouter({
             icon: 'House',
           },
           component: () => import('@/views/home/index.vue'),
+          redirect: '/home/edit',
+          children: [
+            {
+              path: 'edit',
+              name: 'invoice-edit',
+              meta: {
+                title: 'edit',
+                hidden: false,
+                icon: '',
+              },
+              component: () => import('@/views/home/edit.vue'),
+            },
+            {
+              path: 'preview',
+              name: 'invoice-preview',
+              meta: {
+                title: 'preview',
+                hidden: false,
+                icon: '',
+              },
+              component: () => import('@/views/home/preview.vue'),
+            },
+            {
+              path: 'pdf',
+              name: 'invoice-pdf',
+              meta: {
+                title: 'pdf',
+                hidden: false,
+                icon: '',
+              },
+              component: () => import('@/views/home/pdf.vue'),
+            },
+            {
+              path: 'email',
+              name: 'invoice-email',
+              meta: {
+                title: 'email',
+                hidden: false,
+                icon: '',
+              },
+              component: () => import('@/views/home/email.vue'),
+            },
+            {
+              path: 'print',
+              name: 'invoice-print',
+              meta: {
+                title: 'print',
+                hidden: false,
+                icon: '',
+              },
+              component: () => import('@/views/home/print.vue'),
+            },
+          ]
         },
         {
           path: '/invoice-list',
           name: 'invoice-list',
           meta: {
-            title: '首页',
+            title: 'list',
             hidden: false,
             icon: '',
           },

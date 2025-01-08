@@ -1,28 +1,33 @@
 <template>
   <div>
-    <a-tabs v-model:activeKey="activeKey">
+    <a-tabs v-model:activeKey="activeKey" @change="onTabChange">
       <template v-for="item in tabList" :key="item">
-        <a-tab-pane :tab="item">
-          <EditForm v-if="item === 'Edit'" />
-          <div v-else-if="item === 'Preview'">
-            <Invoice/>
-          </div>
-          <div v-else-if="item === 'Print'">
-            <Print/>
-          </div>
-          <div v-else>Content of Tab Pane {{ item }}</div>
-        </a-tab-pane>
+        <a-tab-pane :tab="item"> </a-tab-pane>
       </template>
     </a-tabs>
+    <router-view v-slot="{ Component }">
+      <component :is="Component"></component>
+    </router-view>
   </div>
 </template>
 
 <script setup lang="ts">
-import EditForm from './components/EditForm.vue'
-import Invoice from '@/components/invoice/index.vue'
-import Print from './components/Print.vue';
-import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { reactive, ref, watchEffect } from 'vue'
 const activeKey = ref('Edit')
 const tabList = reactive(['Edit', 'Preview', 'PDF', 'Email', 'Print'])
+const router = useRouter()
+watchEffect(() => {
+  let path = router.currentRoute.value.path.split('/').pop()
+  if(path === 'pdf'){
+    activeKey.value = path.toUpperCase()
+  }else {
+    activeKey.value = path.charAt(0).toUpperCase() + path.slice(1)
+  }
+})
+const onTabChange = (key: string) => {
+  console.log(`/home/${key.toLocaleLowerCase()}`)
+  router.push(`/home/${key.toLocaleLowerCase()}`)
+}
 </script>
 <style scoped lang="scss"></style>
