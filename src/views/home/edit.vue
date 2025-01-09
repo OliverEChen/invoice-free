@@ -191,7 +191,6 @@
                 ok-text="Yes"
                 cancel-text="No"
                 @confirm="onDeleteItem(index)"
-                @cancel="cancel"
               >
                 <a-button type="primary" danger :icon="h(DeleteOutlined)"> Delete </a-button>
               </a-popconfirm>

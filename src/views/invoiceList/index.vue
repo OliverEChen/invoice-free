@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <a-spin :spinning="spinning" tip="Invoice Loading...">
     <a-tabs v-model:activeKey="activeKey">
       <template v-for="item in tabList" :key="item">
         <a-tab-pane :tab="item">
@@ -66,7 +66,7 @@
                         <a-button type="link">Email</a-button>
                       </p>
                       <p>
-                        <a-button type="link" @click="onPrint">Print</a-button>
+                        <a-button type="link" @click="onPrint(record.id)">Print</a-button>
                       </p>
                       <p>
                         <a-button type="link" danger @click="showDeleteConfirm(record.id)"
@@ -83,16 +83,22 @@
         </a-tab-pane>
       </template>
     </a-tabs>
-  </div>
+    <Invoice ref="invoiceRef" style="display: none;"/>
+
+  </a-spin>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref, createVNode, h, onMounted } from 'vue'
 import { Modal, Space, message } from 'ant-design-vue';
 import { ExclamationCircleOutlined, MoreOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import Invoice from '@/components/invoice/index.vue'
 import { get, post } from '@/api/http'
 import router from '@/router'
 import {useUserStore} from '@/store/modules/user'
+import {printHTML} from '@/utils/utils'
+const spinning = ref<boolean>(false);
+const invoiceRef = ref(null)
 const activeKey = ref('Invoice List')
 const tabList = reactive(['Invoice List'])
 const userStore = useUserStore()
@@ -171,8 +177,20 @@ const handleReset = () => {
   formState.toName = ''
   getInvoiceList()
 }
-const onPrint = () => {
-  window.print()
+const onPrint = async (id) => {
+  spinning.value = true
+  const { code, data } = await get(`/api/v1/invoice/detail/${id}`)
+  if(code === '00000'){
+    userStore.setInvoiceData(data)
+    setTimeout(() => {
+      spinning.value = false
+      const content = invoiceRef.value.$el.innerHTML
+      printHTML(content)
+    },1000)
+  }else {
+    spinning.value = false
+  }
+
 }
 const onGetLink = async (record) => {
   console.log('record', record)
