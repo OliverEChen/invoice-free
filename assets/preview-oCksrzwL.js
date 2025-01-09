@@ -1,0 +1,1 @@
+import{_ as o}from"./index.vue_vue_type_script_setup_true_lang-BM3Gt96A.js";import{d as r,r as n,o as t,c as a,b as c}from"./index-D6c8NPQG.js";import"./dayjs.min-tUQWaACv.js";const p=r({__name:"preview",setup(s){const e=n(null);return(i,_)=>(t(),a("div",null,[c(o,{ref_key:"invoiceRef",ref:e},null,512)]))}});export{p as default};
