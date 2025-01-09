@@ -29,6 +29,7 @@ import CusMain from './main/index.vue'
     height: $header-height;
   }
   .main-wrap {
+    background: #fff;
     position: absolute;
     top: $header-height;
     width: 100%;

@@ -12,6 +12,10 @@ export const useUserStore = defineStore('user', {
             this.invoiceData = data
             localStorage.setItem('invoice_data', JSON.stringify(data))
         },
+        removeInvoiceData() {
+            this.invoiceData = {}
+            localStorage.removeItem('invoice_data')
+        },
         setToken(token) {
             this.token = token
             localStorage.setItem('TOKEN', token)

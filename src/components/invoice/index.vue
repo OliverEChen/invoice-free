@@ -19,27 +19,27 @@
           :src="invoiceData?.logoUrl"
         />
         <div>
-          <div style="font-weight: 500; font-size: 18px">百度</div>
-          <div>yanhong li</div>
+          <div style="font-weight: 500; font-size: 18px">{{ invoiceData.fromOwner }}</div>
+          <div>{{ invoiceData.fromName }}</div>
           <div>
-            <span style="font-weight: 500">Business Number</span>
+            <span style="font-weight: 500">Bussiness Number</span>
             <span style="margin-left: 10px;">{{ invoiceData?.fromBusNumber }}</span>
           </div>
-          <div>东川路500号</div>
-          <div>上海</div>
-          <div>100201</div>
-          <div>13596906558</div>
-          <div>http://www.baidu.com</div>
-          <div>165498461@163.com</div>
+          <div>{{ invoiceData.fromStreet }}</div>
+          <div>{{ invoiceData.fromCity }}</div>
+          <div>{{ invoiceData.fromZipCode }}</div>
+          <div>{{ invoiceData.fromPhone }}</div>
+          <div>{{ invoiceData.fromWebsite }}</div>
+          <div>{{ invoiceData.fromEmail }}</div>
         </div>
       </div>
       <div style="flex: 1; text-align: right">
-        <div style="font-weight: 500">INVOICED</div>
-        <div>scb56466</div>
+        <div style="font-weight: 500">INVOICE</div>
+        <div>{{ invoiceData.number }}</div>
         <div style="font-weight: 500">DATE</div>
-        <div>Dec 1, 2024</div>
+        <div>{{ invoiceData.date }}</div>
         <div style="font-weight: 500">DUE DATE</div>
-        <div>Dec 1, 2024</div>
+        <div>{{ invoiceData.due }}</div>
         <div style="font-weight: 500">BANLANCE DUE</div>
         <div>SGD S$1646</div>
       </div>
@@ -47,32 +47,32 @@
     <div style="border: 1px solid #ccc; margin: 10px 0"></div>
     <div>
       <div>BILL TO</div>
-      <div>贝壳</div>
-      <div>黄河路877</div>
-      <div>北京</div>
-      <div>100212</div>
+      <div style="font-weight: 500;">{{ invoiceData.toName }}</div>
+      <div>{{ invoiceData.toStreet }}</div>
+      <div>{{ invoiceData.toCity }}</div>
+      <div>{{ invoiceData.toZipCode }}</div>
       <div style="display: flex; align-items: center">
         <img
           style="width: 12px; height: 12px; margin-right: 10px"
           src="../../assets/icon-2.png"
         />
-        <div>86 5002647</div>
+        <div>{{ invoiceData.toMobile }}</div>
       </div>
       <div style="display: flex; align-items: center">
         <img
           style="width: 12px; height: 12px; margin-right: 10px"
           src="../../assets/icon-1.png"
         />
-        <div>158965841265</div>
+        <div>{{ invoiceData.toPhone }}</div>
       </div>
       <div style="display: flex; align-items: center">
         <img
           style="width: 12px; height: 12px; margin-right: 10px"
           src="../../assets/icon-3.png"
         />
-        <div>158965841265</div>
+        <div>{{ invoiceData.toFax }}</div>
       </div>
-      <div>154649868984@163.com</div>
+      <div>{{ invoiceData.toEmail }}</div>
     </div>
     <div style="margin-top: 10px">
       <div style="font-weight: 700; display: flex">
@@ -82,41 +82,41 @@
         <div style="width: 15%">AMOUNT</div>
       </div>
       <div style="border: 1px solid #000; margin: 8px 0"></div>
-      <div v-for="(item, index) in items">
+      <div v-for="(item, index) in invoiceData.invoiceItems" :key="index">
         <div style="display: flex">
           <div style="width: 55%">
-            <div style="font-weight: 500">banana</div>
-            <div>banana details banana details banana details banana details banana details</div>
+            <div style="font-weight: 500">{{ item.description }}</div>
+            <div>{{ item.addDetails }}</div>
           </div>
-          <div style="width: 15%">S$88.88</div>
-          <div style="width: 15%">8</div>
-          <div style="width: 15%">S$88.88</div>
+          <div style="width: 15%">S${{ item.unitCost }}</div>
+          <div style="width: 15%">{{item.quantity}}</div>
+          <div style="width: 15%">S${{item.amount}}</div>
         </div>
-        <div style="border: 1px dashed #ccc; margin: 8px 0" v-if="items.length - 1 !== index"></div>
+        <div style="border: 1px dashed #ccc; margin: 8px 0" v-if="invoiceData.invoiceItems.length - 1 !== index"></div>
       </div>
       <div style="border: 1px solid #ccc; margin: 8px 0"></div>
       <div style="margin-left: 50%">
         <div style="display: flex; justify-content: space-between">
           <div style="font-weight: 500">SUBTOTAL</div>
-          <div>S$88.88</div>
+          <div>S${{ invoiceData.subTotal }}</div>
         </div>
         <div style="display: flex; justify-content: space-between">
           <div style="font-weight: 500">DISCOUNT</div>
-          <div>S$88.88</div>
+          <div>S${{ invoiceData.discount }}</div>
         </div>
         <div style="display: flex; justify-content: space-between">
           <div style="font-weight: 500">TAX(10%)</div>
-          <div>S$88.88</div>
+          <div>{{ invoiceData.tax }}</div>
         </div>
         <div style="border: 1px solid #ccc; margin: 8px 0"></div>
         <div style="display: flex; justify-content: space-between">
           <div style="font-weight: 500">TOTAL</div>
-          <div>S$88.88</div>
+          <div>S${{ invoiceData.total }}</div>
         </div>
         <div style="border: 1px solid #ccc; margin: 8px 0"></div>
         <div style="display: flex; justify-content: space-between">
           <div style="font-weight: 500">BANLANCE DUE</div>
-          <div style="font-weight: 700">S$88.88</div>
+          <div style="font-weight: 700">S${{ invoiceData.total }}</div>
         </div>
         <div style="border: 1px solid #ccc; margin: 8px 0"></div>
         <div style="page-break-inside: avoid;">
@@ -130,10 +130,10 @@
       </div>
     </div>
     <div style="display: flex;flex-wrap: wrap;margin-top: 10px;">
-      <div style="margin: 0 10px 10px 0;width: 120px;" v-for="item in photos">
-        <img style="width: 120px; height: 120px;" src="https://aliyuncdn.antdv.com/vue.png" />
-        <div style="font-weight: 500">我的名片</div>
-        <div>这是我的名片 这是我的名片 这是我的名片</div>
+      <div style="margin: 0 10px 10px 0;width: 120px;page-break-inside: avoid;" v-for="item in invoiceData.invoicePhotos" :key="item.photoId">
+        <img style="width: 120px; height: 120px;" :src="item.photoUrl" />
+        <div style="font-weight: 500">{{ item.description }}</div>
+        <div>{{ item.addDetails }}</div>
       </div>
     </div>
   </div>

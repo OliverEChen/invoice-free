@@ -46,5 +46,6 @@ declare module 'vue' {
     MyVueSignaturePad: typeof import('./src/components/myVueSignaturePad/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SendEmail: typeof import('./src/components/sendEmail/index.vue')['default']
   }
 }

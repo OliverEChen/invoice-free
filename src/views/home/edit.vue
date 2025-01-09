@@ -366,6 +366,7 @@ const termsOption = [
   '365 Days',
 ]
 const initialFormData = {
+  id: null,
   number: '',
   date: dayjs().format('YYYY-MM-DD'),
   terms: 'On Receipt',
@@ -390,11 +391,11 @@ const initialFormData = {
   toMobile: '',
   toFax: '',
   currency: '',
-  subTotal: 0.0,
-  tax: null,
-  discount: null,
-  shippingFee: null,
-  total: null,
+  subTotal: 0,
+  tax: 0,
+  discount: 0,
+  shippingFee: 0,
+  total: 0,
   notes: '',
   signatureId: null,
   signatureUrl: '',
@@ -432,11 +433,15 @@ watch(
   ],
   (newVal) => {
     // Total = subtotal + subtotal * tax - discount + sheeping fee
-    formState.total = newVal[0] + (newVal[0] * (newVal[1] / 100) - newVal[2]) + newVal[3]
+    let sum = newVal[0] + (newVal[0] * (newVal[1] / 100) - newVal[2]) + newVal[3]
+    formState.total = parseFloat(sum.toFixed(2))
   },
 )
 onBeforeRouteLeave((to, from) => {
-  userStore.setInvoiceData(formState)
+  if(to.path !== '/login'){
+    // 退出登录不需要保存数据，直接退出登录即可
+    userStore.setInvoiceData(formState)
+  }
   // const answer = window.confirm(
   //   'Do you really want to leave? you have unsaved changes!'
   // )
@@ -444,7 +449,9 @@ onBeforeRouteLeave((to, from) => {
   // if (!answer) return false
 })
 const onSave = async () => {
-  const {code} = await post('/api/v1/invoice/save', formState)
+  // 有 id 为修改，无 id 为新增
+  const url = formState.id ? '/api/v1/invoice/update' : '/api/v1/invoice/save'
+  const {code} = await post(url, formState)
   if(code === '00000'){
     message.success('Save invoice successfully!')
   }else {
@@ -527,8 +534,8 @@ const onAddItem = () => {
     description: '',
     addDetails: '',
     quantity: 0,
-    amount: '',
-    seq: '',
+    amount: 0,
+    seq: 0,
     unitCost: 0,
   })
 }

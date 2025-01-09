@@ -34,7 +34,12 @@
               }"
             >
               <template #bodyCell="{ column, record }">
-                <template v-if="column.key === 'paid'">
+                <template v-if="column.key === 'number'">
+                  <a @click="toEditInvoice(record.id)">
+                    {{ record.number }}
+                  </a>
+                </template>
+                <template v-else-if="column.key === 'paid'">
                   <a>
                     {{ record.paid }}
                   </a>
@@ -64,7 +69,7 @@
                         <a-button type="link" @click="onPrint">Print</a-button>
                       </p>
                       <p>
-                        <a-button type="link" danger @click="showDeleteConfirm(record)"
+                        <a-button type="link" danger @click="showDeleteConfirm(record.id)"
                           >Delete</a-button
                         >
                       </p>
@@ -83,12 +88,14 @@
 
 <script setup lang="ts">
 import { reactive, ref, createVNode, h, onMounted } from 'vue'
-import { Modal, Space } from 'ant-design-vue'
+import { Modal, Space, message } from 'ant-design-vue';
 import { ExclamationCircleOutlined, MoreOutlined, PlusOutlined } from '@ant-design/icons-vue'
-import { get } from '@/api/http'
+import { get, post } from '@/api/http'
 import router from '@/router'
+import {useUserStore} from '@/store/modules/user'
 const activeKey = ref('Invoice List')
 const tabList = reactive(['Invoice List'])
+const userStore = useUserStore()
 const markPaidItems = reactive([
   'Bank Transfer',
   'Cash',
@@ -146,8 +153,16 @@ const getInvoiceList = async () => {
     tableData.value = data.list
   }
 }
+const toEditInvoice = async (id) => {
+  const { code, data } = await get(`/api/v1/invoice/detail/${id}`)
+  if(code === '00000'){
+    userStore.setInvoiceData(data)
+    router.push('/home/edit')
+  }
+}
 const toNewInvoice = () => {
-  router.push('/home')
+  userStore.removeInvoiceData()
+  router.push('/home/edit')
 }
 const handleSearch = () => {
   getInvoiceList()
@@ -170,7 +185,7 @@ const onGetLink = async (record) => {
     console.error('复制失败', err)
   }
 }
-const showDeleteConfirm = (record) => {
+const showDeleteConfirm = (id) => {
   Modal.confirm({
     title: 'Are you to sure delete it?',
     icon: createVNode(ExclamationCircleOutlined),
@@ -178,8 +193,14 @@ const showDeleteConfirm = (record) => {
     okText: 'Yes',
     okType: 'danger',
     cancelText: 'Cancel',
-    onOk() {
-      console.log('OK')
+    async onOk() {
+      const {code, data} = await post('/api/v1/invoice/delete', {id})
+      if(code === '00000'){
+        message.success('Delete success')
+        getInvoiceList()
+      }else {
+        message.error('Delete failed')
+      }
     },
     onCancel() {
       console.log('Cancel')
