@@ -331,9 +331,9 @@ import {
   DeleteOutlined,
   ArrowUpOutlined,
 } from '@ant-design/icons-vue/lib/icons'
-import CusUpload from '@/components/upload/CusUpload.vue'
+import CusUpload from '@/components/upload/cusUpload.vue'
 import MyVueSignature from '@/components/myVueSignaturePad/index.vue'
-import EditPhotoDetail from './components/EditPhotoDetail.vue'
+import EditPhotoDetail from './components/editPhotoDetail.vue'
 import {onBeforeRouteLeave } from 'vue-router'
 import { reactive, ref, watch, h, onMounted } from 'vue';
 import dayjs, { Dayjs } from 'dayjs'

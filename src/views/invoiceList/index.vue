@@ -63,7 +63,7 @@
                         <a-button type="link" @click="onGetLink(record)">Get Link</a-button>
                       </p>
                       <p>
-                        <a-button type="link">Email</a-button>
+                        <a-button type="link" @click="onSendEmail">Email</a-button>
                       </p>
                       <p>
                         <a-button type="link" @click="onPrint(record.id)">Print</a-button>
@@ -84,7 +84,7 @@
       </template>
     </a-tabs>
     <Invoice ref="invoiceRef" style="display: none;"/>
-
+    <Email ref="emailRef"/>
   </a-spin>
 </template>
 
@@ -97,8 +97,10 @@ import { get, post } from '@/api/http'
 import router from '@/router'
 import {useUserStore} from '@/store/modules/user'
 import {printHTML} from '@/utils/utils'
+import Email from '@/components/sendEmail/index.vue';
 const spinning = ref<boolean>(false);
 const invoiceRef = ref(null)
+const emailRef = ref(null)
 const activeKey = ref('Invoice List')
 const tabList = reactive(['Invoice List'])
 const userStore = useUserStore()
@@ -158,6 +160,9 @@ const getInvoiceList = async () => {
     total.value = data.total
     tableData.value = data.list
   }
+}
+const onSendEmail = (record) => {
+  emailRef.value.showModal()
 }
 const toEditInvoice = async (id) => {
   const { code, data } = await get(`/api/v1/invoice/detail/${id}`)

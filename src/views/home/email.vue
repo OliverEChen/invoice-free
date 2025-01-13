@@ -1,7 +1,9 @@
 <template>
   <div>
-   <send-email></send-email>
+    <a-button type="primary" class="mg-b10" @click="handleSendEmail">Send Email</a-button>
     <Invoice ref="invoiceRef" />
+    <send-email ref="sendEmailRef"/>
+
   </div>
 </template>
 
@@ -12,6 +14,10 @@ import { Space } from 'ant-design-vue';
 import SendEmail from '@/components/sendEmail/index.vue'
 
 const invoiceRef = ref(null)
+const sendEmailRef = ref(null)
+const handleSendEmail = () => {
+  sendEmailRef.value.showModal()
+}
 </script>
 <style scoped lang="scss">
 </style>
