@@ -1,6 +1,6 @@
 <template>
   <div class="header-content">
-    <div class="left c-ED6337 t-bold f18">InvoiceFree</div>
+    <div class="left c-ED6337 t-bold f18" @click="toHome">InvoiceFree</div>
     <div class="content">
       <a-menu
         v-model:selectedKeys="selectedKeys"
@@ -38,15 +38,17 @@ const selectedKeys = ref(['/home'])
 // )
 watchEffect(() => {
   let path = router.currentRoute.value.path
-  if(path.startsWith('/home')){
-    path = '/home'
+  if(path.startsWith('/generator')){
+    path = '/generator'
   }
   selectedKeys.value = [path]
 })
-
+const toHome = () => {
+  router.push('/home')
+}
 const menuList = reactive([
-  { title: 'Invoice Generator', path: '/home' },
-  { title: 'Invoice List', path: '/invoice-list' },
+  { title: 'Invoice Generator', path: '/generator' },
+  { title: 'Invoice List', path: '/list' },
 ])
 const onClickMenuItem = (path: string) => {
   router.push(path)
@@ -68,6 +70,9 @@ const onLogout = () => {
   color: #fff;
   display: flex;
   flex-wrap: nowrap;
+  .left {
+    cursor: pointer;
+  }
   .left,
   .right {
     width: calc((100% - $main-content-width) / 2);

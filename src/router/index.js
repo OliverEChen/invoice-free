@@ -2,8 +2,7 @@ import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router
 import layout from '@/layout/index.vue'
 
 const router = createRouter({
-  // history: createWebHistory(import.meta.env.BASE_URL),
-  history: createWebHashHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
@@ -15,12 +14,22 @@ const router = createRouter({
           path: '/home',
           name: 'home',
           meta: {
-            title: '首页',
+            title: 'home',
+            hidden: false,
+            icon: '',
+          },
+          component: () => import('@/views/home/index.vue'),
+        },
+        {
+          path: '/generator',
+          name: 'generator',
+          meta: {
+            title: 'generator',
             hidden: false,
             icon: 'House',
           },
-          component: () => import('@/views/home/index.vue'),
-          redirect: '/home/edit',
+          component: () => import('@/views/invoiceGenerator/index.vue'),
+          redirect: '/generator/edit',
           children: [
             {
               path: 'edit',
@@ -30,7 +39,7 @@ const router = createRouter({
                 hidden: false,
                 icon: '',
               },
-              component: () => import('@/views/home/edit.vue'),
+              component: () => import('@/views/invoiceGenerator/edit.vue'),
             },
             {
               path: 'preview',
@@ -40,7 +49,7 @@ const router = createRouter({
                 hidden: false,
                 icon: '',
               },
-              component: () => import('@/views/home/preview.vue'),
+              component: () => import('@/views/invoiceGenerator/preview.vue'),
             },
             {
               path: 'pdf',
@@ -50,7 +59,7 @@ const router = createRouter({
                 hidden: false,
                 icon: '',
               },
-              component: () => import('@/views/home/pdf.vue'),
+              component: () => import('@/views/invoiceGenerator/pdf.vue'),
             },
             {
               path: 'email',
@@ -60,7 +69,7 @@ const router = createRouter({
                 hidden: false,
                 icon: '',
               },
-              component: () => import('@/views/home/email.vue'),
+              component: () => import('@/views/invoiceGenerator/email.vue'),
             },
             {
               path: 'print',
@@ -70,12 +79,12 @@ const router = createRouter({
                 hidden: false,
                 icon: '',
               },
-              component: () => import('@/views/home/print.vue'),
+              component: () => import('@/views/invoiceGenerator/print.vue'),
             },
           ]
         },
         {
-          path: '/invoice-list',
+          path: '/list',
           name: 'invoice-list',
           meta: {
             title: 'list',
