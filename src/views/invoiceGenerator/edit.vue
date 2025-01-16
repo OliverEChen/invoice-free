@@ -136,11 +136,16 @@
               ref="select"
               v-model:value="formState.currency"
               style="width: 100%"
+              show-search
+              :filter-option="filterCurrencyOption"
               @change="handleCurrencyChange"
             >
-              <a-select-option value="jack">Jack</a-select-option>
-              <a-select-option value="lucy">Lucy</a-select-option>
-              <a-select-option value="Yiminghe">yiminghe</a-select-option>
+              <template v-for="item in currencyOption" :key="item.id">
+                <a-select-option :value="item.signId" :label="item.name">
+                  <img :src="item.url" alt="" style="width: 16px; height: 16px" />
+                  &nbsp;&nbsp;{{ item.name }}
+                </a-select-option>
+              </template>
             </a-select>
           </a-form-item>
         </a-col>
@@ -214,7 +219,9 @@
         <a-row>
           <a-col :span="12"></a-col>
           <a-col :span="12">
-            <a-form-item label="Subtotal"> $ {{ formState.subTotal }} </a-form-item>
+            <a-form-item label="Subtotal">
+              {{ formatCurrency(formState.currency) }} {{ formState.subTotal }}
+            </a-form-item>
             <a-form-item label="Tax %">
               <div class="flex f-a-center">
                 <a-input-number v-model:value="formState.tax" :precision="2" :max="100" :min="0" />
@@ -227,7 +234,9 @@
             <a-form-item label="Shipping Fee">
               <a-input-number v-model:value="formState.shippingFee" :precision="2" :min="0" />
             </a-form-item>
-            <a-form-item label="Total"> $ {{ formState.total }} </a-form-item>
+            <a-form-item label="Total">
+              {{ formatCurrency(formState.currency) }} {{ formState.total }}
+            </a-form-item>
           </a-col>
         </a-row>
       </div>
@@ -291,10 +300,7 @@
           <div class="flex f-wrap">
             <template v-for="(item, index) in formState.invoicePhotos">
               <div class="mg-r10 mg-b10" style="width: 100px">
-                <a-image
-                  :width="100"
-                  :src="item.photoUrl"
-                />
+                <a-image :width="100" :src="item.photoUrl" />
                 <div class="f18 t_ellipsis">{{ item.description }}</div>
                 <div class="t_ellipsis2">{{ item.addDetails }}</div>
                 <div>
@@ -311,18 +317,20 @@
                 </div>
               </div>
             </template>
-            <CusUpload :isAvatar="false" @fileData="getPhotoData"/>
+            <CusUpload :isAvatar="false" @fileData="getPhotoData" />
           </div>
         </a-col>
       </a-row>
     </a-form>
   </div>
   <a-space class="mg-t30">
-    <a-button type="primary" html-type="submit" style="padding: 0 30px" @click="onSave">Save</a-button>
+    <a-button type="primary" html-type="submit" style="padding: 0 30px" @click="onSave"
+      >Save</a-button
+    >
     <a-button style="padding: 0 30px" @click="onClear">Clear</a-button>
   </a-space>
   <MyVueSignature ref="myVueSignature" @signatureData="getSignatureData" />
-  <EditPhotoDetail ref="editPhotoDetail" @photoData="getPhotoDataDetail"/>
+  <EditPhotoDetail ref="editPhotoDetail" @photoData="getPhotoDataDetail" />
 </template>
 <script setup>
 import {
@@ -334,15 +342,16 @@ import {
 import CusUpload from '@/components/upload/cusUpload.vue'
 import MyVueSignature from '@/components/myVueSignaturePad/index.vue'
 import EditPhotoDetail from './components/editPhotoDetail.vue'
-import {onBeforeRouteLeave } from 'vue-router'
-import { reactive, ref, watch, h, onMounted } from 'vue';
+import { onBeforeRouteLeave } from 'vue-router'
+import { reactive, ref, watch, h, onMounted } from 'vue'
 import dayjs, { Dayjs } from 'dayjs'
 import { addDaysToDate, base64ToFile } from '@/utils/utils'
 import { message } from 'ant-design-vue'
-import {uploadApi, post} from '@/api/http'
-import {cloneDeep} from 'lodash'
-import {useUserStore} from '@/store/modules/user'
+import { uploadApi, post, get } from '@/api/http'
+import { cloneDeep } from 'lodash'
+import { useUserStore } from '@/store/modules/user'
 import { storeToRefs } from 'pinia'
+import {formatCurrency} from '@/utils/utils'
 const termsOption = [
   'None',
   'Custom',
@@ -364,6 +373,7 @@ const termsOption = [
   '180 Days',
   '365 Days',
 ]
+let currencyOption = ref([])
 const initialFormData = {
   id: null,
   number: '',
@@ -403,14 +413,15 @@ const initialFormData = {
   invoicePhotos: [],
 }
 const userStore = useUserStore()
-const {invoiceData} = storeToRefs(userStore)
+const { invoiceData } = storeToRefs(userStore)
 
 const formState = reactive(cloneDeep(initialFormData))
 const formRef = ref(null)
 const myVueSignature = ref(null)
 const editPhotoDetail = ref(null)
 onMounted(() => {
-  Object.assign(formState,invoiceData.value)
+  Object.assign(formState, invoiceData.value)
+  getCurrencyList()
 })
 watch(
   () => formState.invoiceItems,
@@ -436,8 +447,18 @@ watch(
     formState.total = parseFloat(sum.toFixed(2))
   },
 )
+const getCurrencyList = async () => {
+  const { code, data } = await get('/api/v1/currency/list')
+  if (code === '00000') {
+    currencyOption.value = data.map((item) => {
+      item.signId = item.id + '-' + item.sign
+      item.url = import.meta.env.VITE_SERVE + '/api/v1/ossFile/preview?path=' + item.url
+      return item
+    })
+  }
+}
 onBeforeRouteLeave((to, from) => {
-  if(to.path !== '/login'){
+  if (to.path !== '/login') {
     // 退出登录不需要保存数据，直接退出登录即可
     userStore.setInvoiceData(formState)
   }
@@ -450,20 +471,27 @@ onBeforeRouteLeave((to, from) => {
 const onSave = async () => {
   // 有 id 为修改，无 id 为新增
   const url = formState.id ? '/api/v1/invoice/update' : '/api/v1/invoice/save'
-  const {code} = await post(url, formState)
-  if(code === '00000'){
+  const submitData = cloneDeep(formState)
+  submitData.currency = submitData.currency.split('-')[1]
+  const { code } = await post(url, formState)
+  if (code === '00000') {
     message.success('Save invoice successfully!')
-  }else {
+  } else {
     message.error('Save invoice failed!')
   }
 }
 const onClear = () => {
-  Object.assign(formState,cloneDeep(initialFormData))
+  Object.assign(formState, cloneDeep(initialFormData))
   console.log('Clear invoice successfully', formState)
-
 }
 const handleCurrencyChange = (val) => {
   formState.currency = val
+}
+const filterCurrencyOption = (input, option) => {
+  return (
+    option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
+    option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
+  )
 }
 const handleItemAmount = (item) => {
   item.amount = item.quantity * item.unitCost
@@ -491,7 +519,7 @@ const getPhotoData = (data) => {
 const getPhotoDataDetail = (data) => {
   const obj = {
     photoUrl: data.photoUrl,
-    photoId: data.id,
+    photoId: data.photoId,
     description: data.description,
     addDetails: data.addDetails,
   }
@@ -542,7 +570,7 @@ const onDeleteItem = (index) => {
   formState.invoiceItems.splice(index, 1)
 }
 const getSignatureData = (data) => {
-  const {file} = base64ToFile(data, `signature${Date.now()}.png`)
+  const { file } = base64ToFile(data, `signature${Date.now()}.png`)
   const formData = new FormData()
   formData.append('file', file)
   formData.append('dir', 'signature')

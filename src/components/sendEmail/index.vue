@@ -20,11 +20,11 @@
           autocomplete="off"
         >
           <a-form-item label="To(required)">
-            <a-input placeholder="name@example.com" v-model:value="formState.email" />
+            <a-input placeholder="name@example.com" v-model:value="formState.to" />
           </a-form-item>
 
           <a-form-item label="From(required)">
-            <a-input placeholder="name@example.com" v-model:value="formState.email" />
+            <a-input placeholder="name@example.com" v-model:value="formState.from" />
           </a-form-item>
 
           <a-form-item label="Message(required)">
@@ -44,10 +44,21 @@
   </div>
 </template>
 <script setup>
-import { ref, defineEmits, reactive } from 'vue'
+import { Form, message } from 'ant-design-vue'
+import { ref, defineEmits, reactive, toRaw } from 'vue'
+import { post } from '@/api/http'
+import { useUserStore } from '@/store/modules/user'
+
+const userStore = useUserStore()
 const formState = reactive({
-  email: '',
-  password: '',
+  from: '',
+  to: '',
+  message: '',
+})
+const rulesRef = reactive({})
+const useForm = Form.useForm
+const { resetFields, validate, validateInfos } = useForm(formState, rulesRef, {
+  onValidate: (...args) => console.log(...args),
 })
 const open = ref(false)
 const showModal = (obj) => {
@@ -57,7 +68,23 @@ const handleCancel = (e) => {
   open.value = false
 }
 const save = () => {
-  open.value = false
+  validate()
+    .then(async () => {
+      const obj = {
+        ...toRaw(formState),
+        id: userStore.invoiceData.id,
+      }
+      const { code, msg } = await post('/api/v1/invoice/sendEmail', obj)
+      if (code === '00000') {
+        message.success('Invoice sent successfully')
+      } else {
+        message.error(msg || 'Failed to send invoice')
+      }
+      open.value = false
+    })
+    .catch((err) => {
+      console.log('error', err)
+    })
 }
 defineExpose({ showModal })
 </script>

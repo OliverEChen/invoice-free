@@ -41,7 +41,7 @@
         <div style="font-weight: 500">DUE DATE</div>
         <div>{{ invoiceData.due }}</div>
         <div style="font-weight: 500">BANLANCE DUE</div>
-        <div>SGD S$1646</div>
+        <div>SGD {{invoiceData.currency}} 1646</div>
       </div>
     </div>
     <div style="border: 1px solid #ccc; margin: 10px 0"></div>
@@ -77,7 +77,7 @@
     <div style="margin-top: 10px">
       <div style="font-weight: 700; display: flex">
         <div style="width: 55%">DESCRIPTION</div>
-        <div style="width: 15%">RATE</div>
+        <div style="width: 15%">Unit Cost</div>
         <div style="width: 15%">QTY</div>
         <div style="width: 15%">AMOUNT</div>
       </div>
@@ -88,9 +88,9 @@
             <div style="font-weight: 500">{{ item.description }}</div>
             <div>{{ item.addDetails }}</div>
           </div>
-          <div style="width: 15%">S${{ item.unitCost }}</div>
+          <div style="width: 15%">{{invoiceData.currency}} {{ item.unitCost }}</div>
           <div style="width: 15%">{{item.quantity}}</div>
-          <div style="width: 15%">S${{item.amount}}</div>
+          <div style="width: 15%">{{invoiceData.currency}} {{item.amount}}</div>
         </div>
         <div style="border: 1px dashed #ccc; margin: 8px 0" v-if="invoiceData.invoiceItems.length - 1 !== index"></div>
       </div>
@@ -98,11 +98,11 @@
       <div style="margin-left: 50%">
         <div style="display: flex; justify-content: space-between">
           <div style="font-weight: 500">SUBTOTAL</div>
-          <div>S${{ invoiceData.subTotal }}</div>
+          <div>{{invoiceData.currency}} {{ invoiceData.subTotal }}</div>
         </div>
         <div style="display: flex; justify-content: space-between">
           <div style="font-weight: 500">DISCOUNT</div>
-          <div>S${{ invoiceData.discount }}</div>
+          <div>{{invoiceData.currency}} {{ invoiceData.discount }}</div>
         </div>
         <div style="display: flex; justify-content: space-between">
           <div style="font-weight: 500">TAX(10%)</div>
@@ -111,12 +111,12 @@
         <div style="border: 1px solid #ccc; margin: 8px 0"></div>
         <div style="display: flex; justify-content: space-between">
           <div style="font-weight: 500">TOTAL</div>
-          <div>S${{ invoiceData.total }}</div>
+          <div>{{invoiceData.currency}} {{ invoiceData.total }}</div>
         </div>
         <div style="border: 1px solid #ccc; margin: 8px 0"></div>
         <div style="display: flex; justify-content: space-between">
           <div style="font-weight: 500">BANLANCE DUE</div>
-          <div style="font-weight: 700">S${{ invoiceData.total }}</div>
+          <div style="font-weight: 700">{{invoiceData.currency}} {{ invoiceData.total }}</div>
         </div>
         <div style="border: 1px solid #ccc; margin: 8px 0"></div>
         <div style="page-break-inside: avoid;">
@@ -148,8 +148,6 @@ import dayjs, { Dayjs } from 'dayjs'
 const userStore = useUserStore()
 const {invoiceData} = storeToRefs(userStore)
 
-const items = reactive([1, 2, 3])
-const photos = reactive([1,2])
 </script>
 <style scoped lang="scss">
 </style>

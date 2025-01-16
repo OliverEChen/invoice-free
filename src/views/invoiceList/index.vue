@@ -39,9 +39,9 @@
                     {{ record.number }}
                   </a>
                 </template>
-                <template v-else-if="column.key === 'paid'">
+                <template v-else-if="column.key === 'paidType'">
                   <a>
-                    {{ record.paid }}
+                    {{ markPaidItems[record.paidType - 1] }}
                   </a>
                 </template>
                 <template v-else-if="column.key === 'action'">
@@ -49,9 +49,9 @@
                     <template #content>
                       <a-popover title="" placement="right">
                         <template #content>
-                          <template v-for="item in markPaidItems" :key="item">
+                          <template v-for="(item,index) in markPaidItems" :key="item">
                             <p>
-                              <a-button type="link">{{ item }}</a-button>
+                              <a-button type="link" @click="onMarkPaidItem(record.id, index)">{{ item }}</a-button>
                             </p>
                           </template>
                         </template>
@@ -98,12 +98,14 @@ import router from '@/router'
 import {useUserStore} from '@/store/modules/user'
 import {printHTML} from '@/utils/utils'
 import Email from '@/components/sendEmail/index.vue';
+import { Item } from 'ant-design-vue/es/menu';
 const spinning = ref<boolean>(false);
 const invoiceRef = ref(null)
 const emailRef = ref(null)
 const activeKey = ref('Invoice List')
 const tabList = reactive(['Invoice List'])
 const userStore = useUserStore()
+// 1：Bank Transfer 2：Cash 3：Check 4：Credit 5：Debit 6：Mobile Payment App 7：Other
 const markPaidItems = reactive([
   'Bank Transfer',
   'Cash',
@@ -161,6 +163,19 @@ const getInvoiceList = async () => {
     tableData.value = data.list
   }
 }
+const onMarkPaidItem = async (id, index) => {
+  const data = {
+    id,
+    paidType: index + 1
+  }
+  const { code } = await post('/api/v1/invoice/markPaid', data)
+  if(code === '00000'){
+    message.success('Mark Paid success')
+    getInvoiceList()
+  }else {
+    message.error('Mark Paid failed')
+  }
+}
 const onSendEmail = (record) => {
   emailRef.value.showModal()
 }
@@ -168,12 +183,12 @@ const toEditInvoice = async (id) => {
   const { code, data } = await get(`/api/v1/invoice/detail/${id}`)
   if(code === '00000'){
     userStore.setInvoiceData(data)
-    router.push('/home/edit')
+    router.push('/generator/edit')
   }
 }
 const toNewInvoice = () => {
   userStore.removeInvoiceData()
-  router.push('/home/edit')
+  router.push('/generator/edit')
 }
 const handleSearch = () => {
   getInvoiceList()

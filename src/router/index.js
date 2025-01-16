@@ -81,6 +81,16 @@ const router = createRouter({
               },
               component: () => import('@/views/invoiceGenerator/print.vue'),
             },
+            {
+              path: 'link',
+              name: 'invoice-link',
+              meta: {
+                title: 'link',
+                hidden: false,
+                icon: '',
+              },
+              component: () => import('@/views/invoiceGenerator/link.vue'),
+            },
           ]
         },
         {
@@ -99,6 +109,11 @@ const router = createRouter({
       path: '/signup',
       name: 'signup',
       component: () => import('@/views/signup/index.vue'),
+    },
+    {
+      path: '/link-page',
+      name: 'link-page',
+      component: () => import('@/views/linkedPage/index.vue'),
     },
     {
       path: '/login',

@@ -5,9 +5,7 @@
       list-type="picture-card"
       class="avatar-uploader"
       :show-upload-list="false"
-      :before-upload="beforeUpload"
       :custom-request="customRequest"
-      @change="handleChange"
     >
       <img v-if="isAvatar && imageUrl" :src="imageUrl" alt="avatar" />
       <div v-else>
@@ -51,7 +49,7 @@ const handleChange = (info) => {
     // Get this url from response in real world.
     // getBase64(info.file.originFileObj, (base64Url) => {
     //   imageUrl.value = base64Url
-    //   loading.value = false
+      loading.value = false
     // })
   }
   if (info.file.status === 'error') {
@@ -62,7 +60,7 @@ const handleChange = (info) => {
 const beforeUpload = (file) => {
   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
   if (!isJpgOrPng) {
-    message.error('You can only upload JPG file!')
+    message.error('You can only upload JPG or PNG file!')
     return
   }
   const isLt2M = file.size / 1024 / 1024 < 10
@@ -81,6 +79,11 @@ const onUploadProgress = (ev, onProgress) => {
       onProgress({ percent });
     }
 const customRequest = ({ file, onProgress, onSuccess, onError }) => {
+  if(!beforeUpload(file)) {
+    onError()
+    return
+  }
+  
   const formData = new FormData()
   // fileList.value.forEach(file => {
   //   formData.append('files[]', file);

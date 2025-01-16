@@ -15,7 +15,7 @@
 import { useRouter } from 'vue-router'
 import { reactive, ref, watchEffect } from 'vue'
 const activeKey = ref('Edit')
-const tabList = reactive(['Edit', 'Preview', 'PDF', 'Email', 'Print'])
+const tabList = reactive(['Edit', 'Preview', 'PDF', 'Email', 'Print', 'Link'])
 const router = useRouter()
 watchEffect(() => {
   let path = router.currentRoute.value.path.split('/').pop()

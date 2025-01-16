@@ -119,5 +119,12 @@ export function printHTML(html) {
         document.body.removeChild(iframe)
     }
 }
+export const formatCurrency = (val) => {
+    if (val.length > 0) {
+      return val.split('-')[1]
+    } else {
+      return ''
+    }
+  }
 
 
