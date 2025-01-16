@@ -59,9 +59,6 @@ const toLogin = () => {
 const onLogout = () => {
   useUserStore()
     .logout()
-    .then(() => {
-      router.replace('/login')
-    })
 }
 </script>
 <style scoped lang="scss">

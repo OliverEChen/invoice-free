@@ -2,9 +2,9 @@
 import axios from 'axios'
 import { message } from 'ant-design-vue';
 //引入用户相关的仓库
-import {useUserStore} from '@/store/modules/user'
+import { useUserStore } from '@/store/modules/user'
 //第一步:利用axios对象的create方法,去创建axios实例(其他的配置:基础路径、超时的时间)
-console.log('VITE_APP_BASE_API', import.meta.env)
+const userStore = useUserStore()
 
 const request = axios.create({
   //基础路径
@@ -14,7 +14,6 @@ const request = axios.create({
 //第二步:request实例添加请求与响应拦截器
 request.interceptors.request.use((config) => {
   //获取用户相关的小仓库:获取仓库内部token,登录成功以后携带给服务器
-  const userStore = useUserStore()
   if (userStore.token) {
     config.headers['P-Authorization'] = userStore.token
   }
@@ -32,30 +31,17 @@ request.interceptors.response.use(
   },
   (error) => {
     //失败回调:处理http网络错误的
-    //定义一个变量:存储网络错误信息
-    let msg = ''
+    console.log('error', error)
+
     //http状态码
     const status = error.response.status
-    switch (status) {
-      case 401:
-        msg = 'TOKEN过期'
-        break
-      case 403:
-        msg = '无权访问'
-        break
-      case 404:
-        msg = '请求地址错误'
-        break
-      case 500:
-        msg = '服务器出现问题'
-        break
-      default:
-        msg = '网络出现问题'
-        break
-    }
     //提示错误信息
-    message.error(message);
-    return Promise.reject(error)
+    message.error(error.response.data?.msg || '请求失败');
+    if (status === 401) {
+      userStore.logout()
+    } else {
+      return Promise.reject(error)
+    }
   },
 )
 //对外暴露

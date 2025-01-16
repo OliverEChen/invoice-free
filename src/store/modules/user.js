@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import router from '@/router'
 export const useUserStore = defineStore('user', {
     state: () => {
         return {
@@ -27,6 +28,7 @@ export const useUserStore = defineStore('user', {
             return new Promise((resolve, reject) => {
                 localStorage.clear()
                 this.$reset()
+                router.replace('/login')
                 resolve()
             })
         }
