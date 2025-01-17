@@ -14,7 +14,15 @@
       </a-menu>
     </div>
     <div class="right t-align-r flex-1">
-      <a-button type="text" style="color: #fff" @click="onLogout" v-if="email">Log Out</a-button>
+      <a-popconfirm
+        v-if="email"
+        title="Are you sure?"
+        ok-text="Yes"
+        cancel-text="No"
+        @confirm="onLogout"
+      >
+        <a-button type="text" style="color: #fff">Log Out</a-button>
+      </a-popconfirm>
       <a-button type="text" style="color: #fff" @click="toLogin" v-else>Log In</a-button>
     </div>
   </div>
@@ -38,7 +46,7 @@ const selectedKeys = ref(['/home'])
 // )
 watchEffect(() => {
   let path = router.currentRoute.value.path
-  if(path.startsWith('/generator')){
+  if (path.startsWith('/generator')) {
     path = '/generator'
   }
   selectedKeys.value = [path]
@@ -57,8 +65,7 @@ const toLogin = () => {
   router.replace('/login')
 }
 const onLogout = () => {
-  useUserStore()
-    .logout()
+  useUserStore().logout()
 }
 </script>
 <style scoped lang="scss">
