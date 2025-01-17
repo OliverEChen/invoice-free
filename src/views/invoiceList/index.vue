@@ -47,7 +47,7 @@
                 <template v-else-if="column.key === 'action'">
                   <a-popover title="">
                     <template #content>
-                      <a-popover title="" placement="right">
+                      <a-popover title="" placement="right" v-if="!record.paidType">
                         <template #content>
                           <template v-for="(item,index) in markPaidItems" :key="item">
                             <p>
@@ -59,11 +59,13 @@
                           <a-button type="link">Mark Paid</a-button>
                         </p>
                       </a-popover>
+                      <a-button type="link" @click="onUnMarkPaid(record)" v-else>UnMark Paid</a-button>
+
                       <p>
                         <a-button type="link" @click="onGetLink(record)">Get Link</a-button>
                       </p>
                       <p>
-                        <a-button type="link" @click="onSendEmail">Email</a-button>
+                        <a-button type="link" @click="onSendEmail(record)">Email</a-button>
                       </p>
                       <p>
                         <a-button type="link" @click="onPrint(record.id)">Print</a-button>
@@ -176,8 +178,17 @@ const onMarkPaidItem = async (id, index) => {
     message.error('Mark Paid failed')
   }
 }
+const onUnMarkPaid = async (record) => {
+  const { code } = await post('/api/v1/invoice/unMarkPaid', {id: record.id})
+  if(code === '00000'){
+    message.success('UnMark Paid success')
+    getInvoiceList()
+  }else {
+    message.error('UnMark Paid failed')
+  }
+}
 const onSendEmail = (record) => {
-  emailRef.value.showModal()
+  emailRef.value.showModal(record.id)
 }
 const toEditInvoice = async (id) => {
   const { code, data } = await get(`/api/v1/invoice/detail/${id}`)

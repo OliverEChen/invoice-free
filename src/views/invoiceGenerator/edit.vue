@@ -183,7 +183,7 @@
               />
             </a-col>
             <a-col :span="2">
-              <div style="height: 100%" class="flex f-a-center">$ {{ item.amount }}</div>
+              <div style="height: 100%" class="flex f-a-center">{{ formatCurrency(formState.currency) }} {{ item.amount }}</div>
             </a-col>
             <a-col :span="8">
               <ArrowUpOutlined
@@ -471,8 +471,6 @@ onBeforeRouteLeave((to, from) => {
 const onSave = async () => {
   // 有 id 为修改，无 id 为新增
   const url = formState.id ? '/api/v1/invoice/update' : '/api/v1/invoice/save'
-  const submitData = cloneDeep(formState)
-  submitData.currency = submitData.currency.split('-')[1]
   const { code } = await post(url, formState)
   if (code === '00000') {
     message.success('Save invoice successfully!')

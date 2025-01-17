@@ -55,13 +55,19 @@ const formState = reactive({
   to: '',
   message: '',
 })
+let id = ref(null)
 const rulesRef = reactive({})
 const useForm = Form.useForm
 const { resetFields, validate, validateInfos } = useForm(formState, rulesRef, {
   onValidate: (...args) => console.log(...args),
 })
 const open = ref(false)
-const showModal = (obj) => {
+const showModal = (_id) => {
+  if(_id){
+    id.value = _id
+  }else {
+    id.value = userStore.invoiceData.id
+  }
   open.value = true
 }
 const handleCancel = (e) => {
@@ -72,7 +78,7 @@ const save = () => {
     .then(async () => {
       const obj = {
         ...toRaw(formState),
-        id: userStore.invoiceData.id,
+        id: id.value,
       }
       const { code, msg } = await post('/api/v1/invoice/sendEmail', obj)
       if (code === '00000') {

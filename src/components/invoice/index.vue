@@ -41,7 +41,7 @@
         <div style="font-weight: 500">DUE DATE</div>
         <div>{{ invoiceData.due }}</div>
         <div style="font-weight: 500">BANLANCE DUE</div>
-        <div>SGD {{invoiceData.currency}} 1646</div>
+        <div>SGD {{ formatCurrency(invoiceData.currency) }} 1646</div>
       </div>
     </div>
     <div style="border: 1px solid #ccc; margin: 10px 0"></div>
@@ -88,9 +88,9 @@
             <div style="font-weight: 500">{{ item.description }}</div>
             <div>{{ item.addDetails }}</div>
           </div>
-          <div style="width: 15%">{{invoiceData.currency}} {{ item.unitCost }}</div>
+          <div style="width: 15%">{{ formatCurrency(invoiceData.currency) }} {{ item.unitCost }}</div>
           <div style="width: 15%">{{item.quantity}}</div>
-          <div style="width: 15%">{{invoiceData.currency}} {{item.amount}}</div>
+          <div style="width: 15%">{{ formatCurrency(invoiceData.currency) }} {{item.amount}}</div>
         </div>
         <div style="border: 1px dashed #ccc; margin: 8px 0" v-if="invoiceData.invoiceItems.length - 1 !== index"></div>
       </div>
@@ -98,11 +98,11 @@
       <div style="margin-left: 50%">
         <div style="display: flex; justify-content: space-between">
           <div style="font-weight: 500">SUBTOTAL</div>
-          <div>{{invoiceData.currency}} {{ invoiceData.subTotal }}</div>
+          <div>{{ formatCurrency(invoiceData.currency) }} {{ invoiceData.subTotal }}</div>
         </div>
         <div style="display: flex; justify-content: space-between">
           <div style="font-weight: 500">DISCOUNT</div>
-          <div>{{invoiceData.currency}} {{ invoiceData.discount }}</div>
+          <div>{{ formatCurrency(invoiceData.currency) }} {{ invoiceData.discount }}</div>
         </div>
         <div style="display: flex; justify-content: space-between">
           <div style="font-weight: 500">TAX(10%)</div>
@@ -111,12 +111,12 @@
         <div style="border: 1px solid #ccc; margin: 8px 0"></div>
         <div style="display: flex; justify-content: space-between">
           <div style="font-weight: 500">TOTAL</div>
-          <div>{{invoiceData.currency}} {{ invoiceData.total }}</div>
+          <div>{{ formatCurrency(invoiceData.currency) }} {{ invoiceData.total }}</div>
         </div>
         <div style="border: 1px solid #ccc; margin: 8px 0"></div>
         <div style="display: flex; justify-content: space-between">
           <div style="font-weight: 500">BANLANCE DUE</div>
-          <div style="font-weight: 700">{{invoiceData.currency}} {{ invoiceData.total }}</div>
+          <div style="font-weight: 700">{{ formatCurrency(invoiceData.currency) }} {{ invoiceData.total }}</div>
         </div>
         <div style="border: 1px solid #ccc; margin: 8px 0"></div>
         <div style="page-break-inside: avoid;">
@@ -144,6 +144,7 @@ import { ref, reactive, onMounted, h, onBeforeMount } from 'vue';
 import {useUserStore} from '@/store/modules/user'
 import { storeToRefs } from 'pinia'
 import dayjs, { Dayjs } from 'dayjs'
+import {formatCurrency} from '@/utils/utils'
 
 const userStore = useUserStore()
 const {invoiceData} = storeToRefs(userStore)
