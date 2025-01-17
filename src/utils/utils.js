@@ -120,7 +120,7 @@ export function printHTML(html) {
     }
 }
 export const formatCurrency = (val) => {
-    if (val.length > 0) {
+    if (val?.length > 0) {
       return val.split('-')[1]
     } else {
       return ''

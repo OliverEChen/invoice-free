@@ -49,9 +49,11 @@
                     <template #content>
                       <a-popover title="" placement="right" v-if="!record.paidType">
                         <template #content>
-                          <template v-for="(item,index) in markPaidItems" :key="item">
+                          <template v-for="(item, index) in markPaidItems" :key="item">
                             <p>
-                              <a-button type="link" @click="onMarkPaidItem(record.id, index)">{{ item }}</a-button>
+                              <a-button type="link" @click="onMarkPaidItem(record.id, index)">{{
+                                item
+                              }}</a-button>
                             </p>
                           </template>
                         </template>
@@ -59,7 +61,9 @@
                           <a-button type="link">Mark Paid</a-button>
                         </p>
                       </a-popover>
-                      <a-button type="link" @click="onUnMarkPaid(record)" v-else>UnMark Paid</a-button>
+                      <a-button type="link" @click="onUnMarkPaid(record)" v-else
+                        >UnMark Paid</a-button
+                      >
 
                       <p>
                         <a-button type="link" @click="onGetLink(record)">Get Link</a-button>
@@ -85,23 +89,23 @@
         </a-tab-pane>
       </template>
     </a-tabs>
-    <Invoice ref="invoiceRef" style="display: none;"/>
-    <Email ref="emailRef"/>
+    <Invoice ref="invoiceRef" style="display: none" />
+    <Email ref="emailRef" />
   </a-spin>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref, createVNode, h, onMounted } from 'vue'
-import { Modal, Space, message } from 'ant-design-vue';
+import { Modal, Space, message } from 'ant-design-vue'
 import { ExclamationCircleOutlined, MoreOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import Invoice from '@/components/invoice/index.vue'
 import { get, post } from '@/api/http'
 import router from '@/router'
-import {useUserStore} from '@/store/modules/user'
-import {printHTML} from '@/utils/utils'
-import Email from '@/components/sendEmail/index.vue';
-import { Item } from 'ant-design-vue/es/menu';
-const spinning = ref<boolean>(false);
+import { useUserStore } from '@/store/modules/user'
+import { printHTML } from '@/utils/utils'
+import Email from '@/components/sendEmail/index.vue'
+import { Item } from 'ant-design-vue/es/menu'
+const spinning = ref<boolean>(false)
 const invoiceRef = ref(null)
 const emailRef = ref(null)
 const activeKey = ref('Invoice List')
@@ -158,7 +162,7 @@ onMounted(() => {
 })
 const getInvoiceList = async () => {
   const { code, data } = await get('/api/v1/invoice/list', {
-    toName: formState.toName
+    toName: formState.toName,
   })
   if (code === '00000') {
     total.value = data.total
@@ -168,22 +172,22 @@ const getInvoiceList = async () => {
 const onMarkPaidItem = async (id, index) => {
   const data = {
     id,
-    paidType: index + 1
+    paidType: index + 1,
   }
   const { code } = await post('/api/v1/invoice/markPaid', data)
-  if(code === '00000'){
+  if (code === '00000') {
     message.success('Mark Paid success')
     getInvoiceList()
-  }else {
+  } else {
     message.error('Mark Paid failed')
   }
 }
 const onUnMarkPaid = async (record) => {
-  const { code } = await post('/api/v1/invoice/unMarkPaid', {id: record.id})
-  if(code === '00000'){
+  const { code } = await post('/api/v1/invoice/unMarkPaid', { id: record.id })
+  if (code === '00000') {
     message.success('UnMark Paid success')
     getInvoiceList()
-  }else {
+  } else {
     message.error('UnMark Paid failed')
   }
 }
@@ -192,7 +196,7 @@ const onSendEmail = (record) => {
 }
 const toEditInvoice = async (id) => {
   const { code, data } = await get(`/api/v1/invoice/detail/${id}`)
-  if(code === '00000'){
+  if (code === '00000') {
     userStore.setInvoiceData(data)
     router.push('/generator/edit')
   }
@@ -211,27 +215,26 @@ const handleReset = () => {
 const onPrint = async (id) => {
   spinning.value = true
   const { code, data } = await get(`/api/v1/invoice/detail/${id}`)
-  if(code === '00000'){
+  if (code === '00000') {
     userStore.setInvoiceData(data)
     setTimeout(() => {
       spinning.value = false
       const content = invoiceRef.value.$el.innerHTML
       printHTML(content)
-    },1000)
-  }else {
+    }, 1000)
+  } else {
     spinning.value = false
   }
-
 }
 const onGetLink = async (record) => {
-  console.log('record', record)
+  const linkUrl = import.meta.env.VITE_SERVE + `/link-page?id=${record.id}`
   try {
-    await navigator.clipboard.writeText(record.name)
+    await navigator.clipboard.writeText(linkUrl)
     Modal.success({
       content: h('div', {}, [h('p', 'Link Copied!')]),
     })
   } catch (err) {
-    console.error('复制失败', err)
+    console.error('Linked Failed!', err)
   }
 }
 const showDeleteConfirm = (id) => {
@@ -243,11 +246,11 @@ const showDeleteConfirm = (id) => {
     okType: 'danger',
     cancelText: 'Cancel',
     async onOk() {
-      const {code, data} = await post('/api/v1/invoice/delete', {id})
-      if(code === '00000'){
+      const { code, data } = await post('/api/v1/invoice/delete', { id })
+      if (code === '00000') {
         message.success('Delete success')
         getInvoiceList()
-      }else {
+      } else {
         message.error('Delete failed')
       }
     },
