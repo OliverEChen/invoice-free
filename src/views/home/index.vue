@@ -98,7 +98,11 @@
 import { ref, reactive, onMounted, h } from 'vue'
 import { Button } from 'ant-design-vue'
 import router from '@/router';
+import { useUserStore } from '@/store/modules/user'
+
+const userStore = useUserStore()
 const onCreateInvoice = () => {
+  userStore.removeInvoiceData()
   router.push('/generator/edit')
 }
 </script>

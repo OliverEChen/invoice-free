@@ -12,6 +12,7 @@
     >
       <div class="form-wrap">
         <a-form
+          ref="formRef"
           layout="vertical"
           :model="formState"
           name="basic"
@@ -19,18 +20,22 @@
           :wrapper-col="{ span: 24 }"
           autocomplete="off"
         >
-          <a-form-item label="To(required)">
+          <a-form-item name="to" label="To(required)"
+          :rules="[{required: true, validator: validateEmail, trigger: 'change'}]"
+          >
             <a-input placeholder="name@example.com" v-model:value="formState.to" />
           </a-form-item>
 
-          <a-form-item label="From(required)">
+          <a-form-item name="from" label="From(required)"
+          :rules="[{required: true, validator: validateEmail, trigger: 'change'}]"
+          >
             <a-input placeholder="name@example.com" v-model:value="formState.from" />
           </a-form-item>
 
-          <a-form-item label="Message(required)">
+          <a-form-item name="message" label="Message">
             <a-textarea
               v-model:value="formState.message"
-              placeholder="Autosize height with minimum and maximum number of lines"
+              placeholder="Optional message to your client"
               :auto-size="{ minRows: 2, maxRows: 5 }"
             />
           </a-form-item>
@@ -47,20 +52,17 @@
 import { Form, message } from 'ant-design-vue'
 import { ref, defineEmits, reactive, toRaw } from 'vue'
 import { post } from '@/api/http'
+import {validateEmail} from '@/utils/utils'
 import { useUserStore } from '@/store/modules/user'
 
 const userStore = useUserStore()
+const formRef = ref(null);
 const formState = reactive({
   from: '',
   to: '',
   message: '',
 })
 let id = ref(null)
-const rulesRef = reactive({})
-const useForm = Form.useForm
-const { resetFields, validate, validateInfos } = useForm(formState, rulesRef, {
-  onValidate: (...args) => console.log(...args),
-})
 const open = ref(false)
 const showModal = (_id) => {
   if(_id){
@@ -71,10 +73,11 @@ const showModal = (_id) => {
   open.value = true
 }
 const handleCancel = (e) => {
+  formRef.value.resetFields();
   open.value = false
 }
 const save = () => {
-  validate()
+  formRef.value.validate()
     .then(async () => {
       const obj = {
         ...toRaw(formState),
