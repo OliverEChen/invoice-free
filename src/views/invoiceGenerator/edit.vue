@@ -471,8 +471,13 @@ onBeforeRouteLeave((to, from) => {
 const onSave = async () => {
   // 有 id 为修改，无 id 为新增
   const url = formState.id ? '/api/v1/invoice/update' : '/api/v1/invoice/save'
-  const { code } = await post(url, formState)
+  const { code, data } = await post(url, formState)
   if (code === '00000') {
+    if(url === '/api/v1/invoice/save'){
+      // 新增时保存 id，用于修改时使用
+      formState.id = data.id
+    }
+    userStore.setInvoiceData(formState)
     message.success('Save invoice successfully!')
   } else {
     message.error('Save invoice failed!')
