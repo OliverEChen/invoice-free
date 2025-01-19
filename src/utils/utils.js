@@ -121,10 +121,19 @@ export function printHTML(html) {
 }
 export const formatCurrency = (val) => {
     if (val?.length > 0) {
-      return val.split('-')[1]
+        return val.split('-')[1]
     } else {
-      return ''
+        return ''
     }
-  }
+}
+
+export const downloadFileByURL = (url) => {
+    const a = document.createElement('a')
+    a.href = url
+    a.download = ''
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+}
 
 
