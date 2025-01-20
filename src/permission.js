@@ -3,6 +3,8 @@ import nprogress from 'nprogress'
 import 'nprogress/nprogress.css' // progress bar style
 import pinia from './store'
 import {useUserStore} from '@/store/modules/user'
+
+const whitePage = ['/login','signup','/home']
 nprogress.configure({
   showSpinner: false,
 })
@@ -20,9 +22,7 @@ router.beforeEach(async (to, from, next) => {
       next()
     }
   } else {
-    if (to.path === '/login') {
-      next()
-    }else if(to.path === '/signup') {
+    if (whitePage.includes(to.path)) {
       next()
     } else {
       next({ path: '/login', query: { redirect: to.path } })

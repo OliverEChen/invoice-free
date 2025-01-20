@@ -15,7 +15,7 @@
     </div>
     <div class="right t-align-r flex-1">
       <a-popconfirm
-        v-if="email"
+        v-if="token"
         title="Are you sure?"
         ok-text="Yes"
         cancel-text="No"
@@ -32,7 +32,7 @@
 import { reactive, ref, watch, watchEffect } from 'vue'
 import router from '@/router'
 import { useUserStore } from '@/store/modules/user'
-const email = useUserStore().userInfo
+const token = useUserStore().userInfo.token
 const selectedKeys = ref(['/home'])
 
 // 监听当前路由路径的变化

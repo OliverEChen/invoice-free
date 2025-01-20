@@ -57,7 +57,7 @@
           </a-form-item>
           <a-form-item name="remember">
             <a-checkbox v-model:checked="formState.remember"
-              >I want to receive emails from Invoice Simple and its Affiliates about their products,
+              >I want to receive emails from InvoiceFree and its Affiliates about their products,
               services, news, events, and promotions.
             </a-checkbox>
           </a-form-item>
@@ -119,7 +119,7 @@ const onFinish = async (values: any) => {
   const {code, msg} = await post('/api/v1/user/register', values)
   if(code === '00000'){
     message.success(msg)
-
+    router.push('/login')
   }else {
     message.error(msg)
   }
@@ -136,12 +136,13 @@ const onCancel = () => {
 .page-wrap {
   position: relative;
   background: #444;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   .container {
+    margin: 40px 0;
     color: #fff;
     text-align: center;
     width: 30%;
