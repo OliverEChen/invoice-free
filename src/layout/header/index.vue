@@ -1,6 +1,6 @@
 <template>
   <div class="header-content">
-    <div class="left c-ED6337 t-bold f18" @click="toHome">InvoiceFree</div>
+    <div class="left c-ED6337 t-bold f24" @click="toHome">InvoiceFree</div>
     <div class="content">
       <a-menu
         v-model:selectedKeys="selectedKeys"

@@ -41,7 +41,7 @@
         <div style="font-weight: 500">DUE DATE</div>
         <div>{{ invoiceData.due }}</div>
         <div style="font-weight: 500">BANLANCE DUE</div>
-        <div>SGD {{ formatCurrency(invoiceData.currency) }} 1646</div>
+        <div>{{ formatCurrency(invoiceData.currency) }} 1646</div>
       </div>
     </div>
     <div style="border: 1px solid #ccc; margin: 10px 0"></div>
@@ -131,7 +131,7 @@
     </div>
     <div style="display: flex;flex-wrap: wrap;margin-top: 10px;">
       <div style="margin: 0 10px 10px 0;width: 120px;page-break-inside: avoid;" v-for="item in invoiceData.invoicePhotos" :key="item.photoId">
-        <img style="width: 120px; height: 120px;" :src="item.photoUrl" />
+        <img style="width: 120px;object-fit: contain;" :src="item.photoUrl" />
         <div style="font-weight: 500">{{ item.description }}</div>
         <div>{{ item.addDetails }}</div>
       </div>

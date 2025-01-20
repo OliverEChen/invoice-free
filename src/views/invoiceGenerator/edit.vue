@@ -123,31 +123,32 @@
           </a-form-item>
         </a-col>
       </a-row>
-      <a-row class="currency mg-b20">
-        <a-col :span="4">
-          <div class="flex f-a-center mg-r20" style="height: 100%">
-            <div style="width: 4px; height: 12px; background: #db6d6d" class="mg-r5"></div>
-            <div>Items</div>
-          </div>
-        </a-col>
-        <a-col :span="12">
-          <a-form-item label="Currency" :label-col="{ span: 8 }">
-            <a-select
-              ref="select"
-              v-model:value="formState.currency"
-              style="width: 100%"
-              show-search
-              :filter-option="filterCurrencyOption"
-              @change="handleCurrencyChange"
-            >
-              <template v-for="item in currencyOption" :key="item.id">
-                <a-select-option :value="item.signId" :label="item.name">
-                  <img :src="item.url" alt="" style="width: 16px; height: 16px" />
-                  &nbsp;&nbsp;{{ item.name }}
-                </a-select-option>
-              </template>
-            </a-select>
-          </a-form-item>
+      <a-row class="mg-b20" :gutter="16">
+        <a-col :span="14" class="currency">
+            <div class="flex f-a-center mg-r20">
+              <div style="width: 4px; height: 12px; background: #db6d6d" class="mg-r5"></div>
+              <div>Items</div>
+            </div>
+            <a-form-item label="Currency" :label-col="{ span: 8 }" class="flex-1">
+              <a-select
+                ref="select"
+                v-model:value="formState.currency"
+                style="width: 100%"
+                show-search
+                :filter-option="filterCurrencyOption"
+                @change="handleCurrencyChange"
+              >
+                <template v-for="item in currencyOption" :key="item.id">
+                  <a-select-option :value="item.signId" :label="item.name">
+                    <div class="flex f-a-center">
+                      <img :src="item.url" alt="" style="width: 16px; height: 16px" />
+                      &nbsp;&nbsp;
+                      {{ item.name }}
+                    </div>
+                  </a-select-option>
+                </template>
+              </a-select>
+            </a-form-item>
         </a-col>
       </a-row>
       <!-- Items -->
@@ -183,7 +184,9 @@
               />
             </a-col>
             <a-col :span="2">
-              <div style="height: 100%" class="flex f-a-center">{{ formatCurrency(formState.currency) }} {{ item.amount }}</div>
+              <div style="height: 100%" class="flex f-a-center">
+                {{ formatCurrency(formState.currency) }} {{ item.amount }}
+              </div>
             </a-col>
             <a-col :span="8">
               <ArrowUpOutlined
@@ -351,7 +354,7 @@ import { uploadApi, post, get } from '@/api/http'
 import { cloneDeep } from 'lodash'
 import { useUserStore } from '@/store/modules/user'
 import { storeToRefs } from 'pinia'
-import {formatCurrency} from '@/utils/utils'
+import { formatCurrency } from '@/utils/utils'
 const termsOption = [
   'None',
   'Custom',
@@ -473,7 +476,7 @@ const onSave = async () => {
   const url = formState.id ? '/api/v1/invoice/update' : '/api/v1/invoice/save'
   const { code, data } = await post(url, formState)
   if (code === '00000') {
-    if(url === '/api/v1/invoice/save'){
+    if (url === '/api/v1/invoice/save') {
       // 新增时保存 id，用于修改时使用
       formState.id = data.id
     }
@@ -613,7 +616,15 @@ const onDeleteSignature = () => {
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
   padding: 28px 20px 20px;
 }
-.currency .ant-form-item {
-  margin-bottom: 0;
+.currency {
+  display: flex;
+  align-items: center;
+  ::v-deep .ant-select-selection-item {
+    display: flex;
+    align-items: center;
+  }
+  .ant-form-item {
+    margin-bottom: 0;
+  }
 }
 </style>

@@ -94,30 +94,34 @@ export function base64ToFile(base64, filename) {
         url: url
     };
 }
+
 /**
  * 打印HTML内容
  *
  * @param html 要打印的HTML内容
+ * @returns 返回一个Promise对象，表示打印操作完成
  */
 export function printHTML(html) {
-    const content = html
-    const iframe = document.createElement('iframe')
+    return new Promise((resolve) => {
+        const content = html
+        const iframe = document.createElement('iframe')
 
-    iframe.setAttribute('style', 'display:none;')
-    document.body.appendChild(iframe)
+        iframe.setAttribute('style', 'display:none;')
+        document.body.appendChild(iframe)
 
-    const doc = iframe.contentDocument || iframe.contentWindow.document
+        const doc = iframe.contentDocument || iframe.contentWindow.document
+        doc.open()
+        doc.write('<html><head><title>Print</title></head><body>')
+        doc.write(content)
+        doc.write('</body></html>')
+        doc.close()
 
-    doc.open()
-    doc.write('<html><head><title>Print</title></head><body>')
-    doc.write(content)
-    doc.write('</body></html>')
-    doc.close()
-
-    iframe.contentWindow.onload = function () {
-        iframe.contentWindow.print()
-        document.body.removeChild(iframe)
-    }
+        iframe.contentWindow.onload = function () {
+            iframe.contentWindow.print()
+            document.body.removeChild(iframe)
+            resolve()
+        }
+    })
 }
 export const formatCurrency = (val) => {
     if (val?.length > 0) {

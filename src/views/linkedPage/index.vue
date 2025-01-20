@@ -37,8 +37,10 @@ const loadData = async () => {
   }
 }
 const onPrint = async () => {
+  spinning.value = true
   const content = invoiceRef.value.$el.innerHTML
-  printHTML(content)
+  await printHTML(content)
+  spinning.value = false
 }
 const handleDownloadPdf = async () => {
   if (id) {

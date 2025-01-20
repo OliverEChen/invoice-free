@@ -217,10 +217,10 @@ const onPrint = async (id) => {
   const { code, data } = await get(`/api/v1/invoice/detail/${id}`)
   if (code === '00000') {
     userStore.setInvoiceData(data)
-    setTimeout(() => {
-      spinning.value = false
+    setTimeout(async () => {
       const content = invoiceRef.value.$el.innerHTML
-      printHTML(content)
+      await printHTML(content)
+      spinning.value = false
     }, 1000)
   } else {
     spinning.value = false

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mg-t80">
     <div class="t-align-c">
       <h1 class="f64 font-w-700">Invoice Your Cunstomers</h1>
       <h1 class="f64 font-w-700 c-ED6337 mg-t10 mg-b10">Free，Easy，Fast</h1>
@@ -75,7 +75,7 @@
         <img src="../../assets/home/image-1.jpg" />
       </div>
     </div>
-    <div class="wrap-1">
+    <div class="wrap-1 mg-b40">
       <div class="left">
         <img src="../../assets/home/image-2.jpg" />
       </div>
@@ -109,6 +109,7 @@ const onCreateInvoice = () => {
 <style scoped lang="scss">
 div {
   line-height: 1.5;
+  color: #3D3D3D;
 }
 .create-inv-btn {
   width: 342px;
