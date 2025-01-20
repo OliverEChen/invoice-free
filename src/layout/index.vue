@@ -9,7 +9,7 @@
       </div>
       <a-layout-footer class="footer" v-if="showFooter">
         <div style="width: 70%;">
-          Over <span class="c-ED6337 t-bold">50,000</span> users are using <span class="c-ED6337 t-bold">InvoiceFree</span>, benefiting from its convenient and efficient invoice generation services to meet the financial needs of individuals and businesses effortlessly.
+          Over <span class="c-ED6337 t-bold f36">50,000</span> users are using <span class="c-ED6337 t-bold f36">InvoiceFree</span>, benefiting from its convenient and efficient invoice generation services to meet the financial needs of individuals and businesses effortlessly.
         </div>
     </a-layout-footer>
     </a-layout-content>
@@ -56,6 +56,7 @@ watchEffect(() => {
     }
   }
   .footer {
+    font-size: 24px;
     background-color: #001529;
     color: #fff;
     display: flex;
