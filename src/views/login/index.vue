@@ -56,11 +56,13 @@ import { useUserStore } from '@/store/modules/user'
 import {validateEmail, validatePassword} from '@/utils/utils'
 import {post} from '@/api/http'
 import { message } from 'ant-design-vue';
+import { useRoute } from 'vue-router'
 
 interface FormState {
   email: string
   password: string
 }
+const route = useRoute()
 const formState = reactive<FormState>({
   email: '',
   password: '',
@@ -75,7 +77,7 @@ const onFinish = async (values: any) => {
   if(code === '00000'){
     userStore.setToken(data.token)
     userStore.setUserInfo(data)
-    router.push('/')
+    router.push(route.query?.redirect || '/')
   }else {
     message.error(msg)
   }

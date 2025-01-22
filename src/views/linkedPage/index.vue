@@ -3,7 +3,7 @@
     <div style="width: 70%; margin: 30px auto">
       <div class="flex f-a-center f-j-between mg-b10">
         <a-button type="primary" @click="handleDownloadPdf">PDF</a-button>
-        <a-button type="primary" @click="onPrint">Print</a-button>
+        <a-button type="primary" @click="handlePrint">Print</a-button>
       </div>
 
       <Invoice ref="invoiceRef" v-if="id" />
@@ -36,7 +36,7 @@ const loadData = async () => {
     message.error('Invoice Not Found!')
   }
 }
-const onPrint = async () => {
+const handlePrint = async () => {
   spinning.value = true
   const content = invoiceRef.value.$el.innerHTML
   await printHTML(content)

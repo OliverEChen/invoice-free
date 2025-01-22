@@ -18,7 +18,7 @@ import {useUserStore} from '@/store/modules/user'
 import { message, Modal } from 'ant-design-vue';
 const invoiceRef = ref(null)
 const userStore = useUserStore()
-const id = userStore.invoiceData.id
+const id = userStore.invoiceData.idEncrypt
 const linkUrl = import.meta.env.VITE_SERVE + `/link-page?id=${id}`
 const handleCopy = async () => {
   try {

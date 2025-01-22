@@ -32,7 +32,8 @@
 import { reactive, ref, watch, watchEffect } from 'vue'
 import router from '@/router'
 import { useUserStore } from '@/store/modules/user'
-const token = useUserStore().userInfo.token
+const userStore = useUserStore()
+const token = userStore.token
 const selectedKeys = ref(['/home'])
 
 // 监听当前路由路径的变化
@@ -65,7 +66,7 @@ const toLogin = () => {
   router.replace('/login')
 }
 const onLogout = () => {
-  useUserStore().logout()
+  userStore.logout()
 }
 </script>
 <style scoped lang="scss">

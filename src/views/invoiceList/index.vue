@@ -35,14 +35,12 @@
             >
               <template #bodyCell="{ column, record }">
                 <template v-if="column.key === 'number'">
-                  <a @click="toEditInvoice(record.id)">
+                  <a @click="toEditInvoice(record)">
                     {{ record.number }}
                   </a>
                 </template>
                 <template v-else-if="column.key === 'paidType'">
-                  <a>
                     {{ markPaidItems[record.paidType - 1] }}
-                  </a>
                 </template>
                 <template v-else-if="column.key === 'action'">
                   <a-popover title="">
@@ -147,8 +145,8 @@ const columns = [
   },
   {
     title: 'Balance Due',
-    key: 'balanceDue',
-    dataIndex: 'balanceDue',
+    key: 'total',
+    dataIndex: 'total',
   },
   {
     title: 'Action',
@@ -192,10 +190,10 @@ const onUnMarkPaid = async (record) => {
   }
 }
 const onSendEmail = (record) => {
-  emailRef.value.showModal(record.id)
+  emailRef.value.showModal(record)
 }
-const toEditInvoice = async (id) => {
-  const { code, data } = await get(`/api/v1/invoice/detail/${id}`)
+const toEditInvoice = async ({idEncrypt}) => {
+  const { code, data } = await get(`/api/v1/invoice/detail/${idEncrypt}`)
   if (code === '00000') {
     userStore.setInvoiceData(data)
     router.push('/generator/edit')

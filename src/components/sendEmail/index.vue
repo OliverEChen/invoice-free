@@ -64,11 +64,21 @@ const formState = reactive({
 })
 let id = ref(null)
 const open = ref(false)
-const showModal = (_id) => {
-  if(_id){
-    id.value = _id
+const showModal = (record={}) => {
+  if(record.id){
+    id.value = record.id
+    Object.assign(formState, {
+      from: record.fromEmail,
+      to: record.toEmail,
+    })
+    formState.fromEmail = record.fromEmail
+    formState.toEmail = record.toEmail
   }else {
     id.value = userStore.invoiceData.id
+    Object.assign(formState, {
+      from: userStore.invoiceData.fromEmail,
+      to: userStore.invoiceData.toEmail,
+    })
   }
   open.value = true
 }
