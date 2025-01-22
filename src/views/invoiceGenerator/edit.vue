@@ -354,7 +354,8 @@ import { uploadApi, post, get } from '@/api/http'
 import { cloneDeep } from 'lodash'
 import { useUserStore } from '@/store/modules/user'
 import { storeToRefs } from 'pinia'
-import { formatCurrency } from '@/utils/utils'
+import { formatCurrency, validateEmail } from '@/utils/utils'
+
 const termsOption = [
   'None',
   'Custom',

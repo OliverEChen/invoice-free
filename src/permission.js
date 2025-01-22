@@ -4,7 +4,7 @@ import 'nprogress/nprogress.css' // progress bar style
 import pinia from './store'
 import {useUserStore} from '@/store/modules/user'
 
-const whitePage = ['/login','signup','/home']
+const whitePage = ['/login','/signup','/home']
 nprogress.configure({
   showSpinner: false,
 })

@@ -5,6 +5,7 @@
       <div class="mg-b20">Login to your account</div>
       <div class="form-wrap">
         <a-form
+        ref="formRef"
           layout="vertical"
           :model="formState"
           name="basic"
@@ -37,7 +38,7 @@
             <a-button type="primary" html-type="submit" style="width: 100%">Login</a-button>
           </a-form-item>
           <a-form-item>
-            <a-button style="width: 100%">Cancel</a-button>
+            <a-button style="width: 100%" @click="handleCancel">Cancel</a-button>
           </a-form-item>
         </a-form>
       </div>
@@ -51,7 +52,7 @@
 
 <script lang="ts" setup>
 import router from '@/router'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useUserStore } from '@/store/modules/user'
 import {validateEmail, validatePassword} from '@/utils/utils'
 import {post} from '@/api/http'
@@ -62,6 +63,7 @@ interface FormState {
   email: string
   password: string
 }
+const formRef = ref()
 const route = useRoute()
 const formState = reactive<FormState>({
   email: '',
@@ -70,6 +72,9 @@ const formState = reactive<FormState>({
 const userStore = useUserStore()
 const toSignUp = () => {
   router.push('/signup')
+}
+const handleCancel = () => {
+  formRef.value.resetFields()
 }
 const onFinish = async (values: any) => {
   console.log('Success:', values)
