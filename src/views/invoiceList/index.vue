@@ -42,6 +42,9 @@
                 <template v-else-if="column.key === 'paidType'">
                     {{ markPaidItems[record.paidType - 1] }}
                 </template>
+                <template v-else-if="column.key === 'total'">
+                    {{formatCurrency(record.currency)}}&nbsp;{{ record.total }}
+                </template>
                 <template v-else-if="column.key === 'action'">
                   <a-popover title="">
                     <template #content>
@@ -70,7 +73,7 @@
                         <a-button type="link" @click="onSendEmail(record)">Email</a-button>
                       </p>
                       <p>
-                        <a-button type="link" @click="onPrint(record.id)">Print</a-button>
+                        <a-button type="link" @click="onPrint(record)">Print</a-button>
                       </p>
                       <p>
                         <a-button type="link" danger @click="showDeleteConfirm(record.id)"
@@ -100,7 +103,7 @@ import Invoice from '@/components/invoice/index.vue'
 import { get, post } from '@/api/http'
 import router from '@/router'
 import { useUserStore } from '@/store/modules/user'
-import { printHTML } from '@/utils/utils'
+import { printHTML, formatCurrency } from '@/utils/utils'
 import Email from '@/components/sendEmail/index.vue'
 import { Item } from 'ant-design-vue/es/menu'
 const spinning = ref<boolean>(false)
@@ -210,9 +213,9 @@ const handleReset = () => {
   formState.toName = ''
   getInvoiceList()
 }
-const onPrint = async (id) => {
+const onPrint = async ({idEncrypt}) => {
   spinning.value = true
-  const { code, data } = await get(`/api/v1/invoice/detail/${id}`)
+  const { code, data } = await get(`/api/v1/invoice/detail/${idEncrypt}`)
   if (code === '00000') {
     userStore.setInvoiceData(data)
     setTimeout(async () => {

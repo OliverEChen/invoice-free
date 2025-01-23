@@ -125,30 +125,30 @@
       </a-row>
       <a-row class="mg-b20" :gutter="16">
         <a-col :span="14" class="currency">
-            <div class="flex f-a-center mg-r20">
-              <div style="width: 4px; height: 12px; background: #db6d6d" class="mg-r5"></div>
-              <div>Items</div>
-            </div>
-            <a-form-item label="Currency" :label-col="{ span: 8 }" class="flex-1">
-              <a-select
-                ref="select"
-                v-model:value="formState.currency"
-                style="width: 100%"
-                show-search
-                :filter-option="filterCurrencyOption"
-                @change="handleCurrencyChange"
-              >
-                <template v-for="item in currencyOption" :key="item.id">
-                  <a-select-option :value="item.signId" :label="item.name">
-                    <div class="flex f-a-center">
-                      <img :src="item.url" alt="" style="width: 16px; height: 16px" />
-                      &nbsp;&nbsp;
-                      {{ item.name }}
-                    </div>
-                  </a-select-option>
-                </template>
-              </a-select>
-            </a-form-item>
+          <div class="flex f-a-center mg-r20">
+            <div style="width: 4px; height: 12px; background: #db6d6d" class="mg-r5"></div>
+            <div>Items</div>
+          </div>
+          <a-form-item label="Currency" :label-col="{ span: 8 }" class="flex-1">
+            <a-select
+              ref="select"
+              v-model:value="formState.currency"
+              style="width: 100%"
+              show-search
+              :filter-option="filterCurrencyOption"
+              @change="handleCurrencyChange"
+            >
+              <template v-for="item in currencyOption" :key="item.id">
+                <a-select-option :value="item.signId" :label="item.name">
+                  <div class="flex f-a-center">
+                    <img :src="item.url" alt="" style="width: 16px; height: 16px" />
+                    &nbsp;&nbsp;
+                    {{ item.name }}
+                  </div>
+                </a-select-option>
+              </template>
+            </a-select>
+          </a-form-item>
         </a-col>
       </a-row>
       <!-- Items -->
@@ -346,7 +346,7 @@ import CusUpload from '@/components/upload/cusUpload.vue'
 import MyVueSignature from '@/components/myVueSignaturePad/index.vue'
 import EditPhotoDetail from './components/editPhotoDetail.vue'
 import { onBeforeRouteLeave } from 'vue-router'
-import { reactive, ref, watch, h, onMounted } from 'vue'
+import { reactive, ref, watch, h, onMounted, onBeforeMount, toRaw } from 'vue';
 import dayjs, { Dayjs } from 'dayjs'
 import { addDaysToDate, base64ToFile } from '@/utils/utils'
 import { message } from 'ant-design-vue'
@@ -420,11 +420,13 @@ const userStore = useUserStore()
 const { invoiceData } = storeToRefs(userStore)
 
 const formState = reactive(cloneDeep(initialFormData))
+const formStateInit = reactive(cloneDeep(initialFormData))
 const formRef = ref(null)
 const myVueSignature = ref(null)
 const editPhotoDetail = ref(null)
 onMounted(() => {
   Object.assign(formState, invoiceData.value)
+  Object.assign(formStateInit, invoiceData.value)
   getCurrencyList()
 })
 watch(
@@ -463,8 +465,11 @@ const getCurrencyList = async () => {
 }
 onBeforeRouteLeave((to, from) => {
   if (to.path !== '/login') {
-    // 退出登录不需要保存数据，直接退出登录即可
-    userStore.setInvoiceData(formState)
+    if (JSON.stringify(toRaw(formStateInit)) !== JSON.stringify(toRaw(formState))) {
+      // 退出登录不需要保存数据，直接退出登录即可
+      // 判断是否有未保存的更改，如果有则直接保存
+      onSave()
+    }
   }
   // const answer = window.confirm(
   //   'Do you really want to leave? you have unsaved changes!'

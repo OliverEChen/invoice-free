@@ -41,7 +41,7 @@
         <div style="font-weight: 500">DUE DATE</div>
         <div>{{ invoiceData.due }}</div>
         <div style="font-weight: 500">BANLANCE DUE</div>
-        <div>{{ formatCurrency(invoiceData.currency) }} 1646</div>
+        <div>{{ formatCurrency(invoiceData.currency) }} {{ invoiceData.total }}</div>
       </div>
     </div>
     <div style="border: 1px solid #ccc; margin: 10px 0"></div>
@@ -51,21 +51,21 @@
       <div>{{ invoiceData.toStreet }}</div>
       <div>{{ invoiceData.toCity }}</div>
       <div>{{ invoiceData.toZipCode }}</div>
-      <div style="display: flex; align-items: center">
+      <div style="display: flex; align-items: center" v-if="invoiceData.toMobile">
         <img
           style="width: 12px; height: 12px; margin-right: 10px"
           src="../../assets/icon-2.png"
         />
         <div>{{ invoiceData.toMobile }}</div>
       </div>
-      <div style="display: flex; align-items: center">
+      <div style="display: flex; align-items: center" v-if="invoiceData.toPhone">
         <img
           style="width: 12px; height: 12px; margin-right: 10px"
           src="../../assets/icon-1.png"
         />
         <div>{{ invoiceData.toPhone }}</div>
       </div>
-      <div style="display: flex; align-items: center">
+      <div style="display: flex; align-items: center" v-if="invoiceData.toFax">
         <img
           style="width: 12px; height: 12px; margin-right: 10px"
           src="../../assets/icon-3.png"
