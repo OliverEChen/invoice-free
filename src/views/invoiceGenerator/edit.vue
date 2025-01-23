@@ -596,6 +596,7 @@ const onDeleteItem = (index) => {
   formState.invoiceItems.splice(index, 1)
 }
 const getSignatureData = (data) => {
+  if(!data) return
   const { file } = base64ToFile(data, `signature${Date.now()}.png`)
   const formData = new FormData()
   formData.append('file', file)
