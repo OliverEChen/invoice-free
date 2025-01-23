@@ -30,7 +30,7 @@ import { ref, defineEmits, reactive } from 'vue'
 const open = ref(false)
 const formData = reactive({})
 const emit = defineEmits(['photoData'])
-const showModal = (obj) => {
+const showModal = (action, obj) => {
   open.value = true
   Object.assign(formData, obj)
 }

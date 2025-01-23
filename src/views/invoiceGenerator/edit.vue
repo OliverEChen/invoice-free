@@ -526,7 +526,7 @@ const getPhotoData = (data) => {
     description: '',
     addDetails: '',
   }
-  editPhotoDetail.value.showModal(obj)
+  editPhotoDetail.value.showModal('add', obj)
 }
 const getPhotoDataDetail = (data) => {
   const obj = {
@@ -535,7 +535,12 @@ const getPhotoDataDetail = (data) => {
     description: data.description,
     addDetails: data.addDetails,
   }
-  formState.invoicePhotos.push(obj)
+  const index = formState.invoicePhotos.findIndex(item => item.photoId === obj.photoId)
+  if (index < 0) {
+    formState.invoicePhotos.push(obj)
+  } else {
+    Object.assign(formState.invoicePhotos[index], obj)
+  }
 }
 const handleTermsChange = (val) => {
   console.log('val', val)
