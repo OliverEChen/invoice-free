@@ -5,7 +5,7 @@
       width: 100%;
       border: 1px solid #000;
       box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
-      padding: 28px 20px 20px;
+      padding: 28px 20px;
       line-height: 1.5;
     "
   >
@@ -130,7 +130,7 @@
       </div>
     </div>
     <div style="display: flex;flex-wrap: wrap;margin-top: 10px;">
-      <div style="margin: 0 10px 10px 0;width: 120px;page-break-inside: avoid;" v-for="item in invoiceData.invoicePhotos" :key="item.photoId">
+      <div style="margin: 0 10px 10px 0;width: 120px;display: flex;flex-direction: column;align-items: flex-start;page-break-inside: avoid;" v-for="item in invoiceData.invoicePhotos" :key="item.photoId">
         <img style="width: 120px;object-fit: contain;" :src="item.photoUrl" />
         <div style="font-weight: 500">{{ item.description }}</div>
         <div>{{ item.addDetails }}</div>
