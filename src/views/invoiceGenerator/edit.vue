@@ -346,7 +346,7 @@ import CusUpload from '@/components/upload/cusUpload.vue'
 import MyVueSignature from '@/components/myVueSignaturePad/index.vue'
 import EditPhotoDetail from './components/editPhotoDetail.vue'
 import { onBeforeRouteLeave } from 'vue-router'
-import { reactive, ref, watch, h, onMounted, onBeforeMount, toRaw } from 'vue';
+import { reactive, ref, watch, h, onMounted, onBeforeMount, toRaw } from 'vue'
 import dayjs, { Dayjs } from 'dayjs'
 import { addDaysToDate, base64ToFile } from '@/utils/utils'
 import { message } from 'ant-design-vue'
@@ -355,7 +355,7 @@ import { cloneDeep } from 'lodash'
 import { useUserStore } from '@/store/modules/user'
 import { storeToRefs } from 'pinia'
 import { formatCurrency, validateEmail } from '@/utils/utils'
-
+import { useGeneratorStore } from '@/store/modules/generator'
 const termsOption = [
   'None',
   'Custom',
@@ -417,6 +417,7 @@ const initialFormData = {
   invoicePhotos: [],
 }
 const userStore = useUserStore()
+const generatorStore = useGeneratorStore()
 const { invoiceData } = storeToRefs(userStore)
 
 const formState = reactive(cloneDeep(initialFormData))
@@ -468,14 +469,20 @@ onBeforeRouteLeave((to, from) => {
     if (JSON.stringify(toRaw(formStateInit)) !== JSON.stringify(toRaw(formState))) {
       // 退出登录不需要保存数据，直接退出登录即可
       // 判断是否有未保存的更改，如果有则直接保存
-      onSave()
+      const answer = window.confirm(
+        'You have unsaved changes! leaving this page will automatically save.',
+      )
+      // 取消导航并停留在同一页面上
+      if (!answer) {
+        generatorStore.setActiveKey('1')
+        return false
+      } else {
+        onSave()
+        generatorStore.removeActiveKey()
+        return answer
+      }
     }
   }
-  // const answer = window.confirm(
-  //   'Do you really want to leave? you have unsaved changes!'
-  // )
-  // // 取消导航并停留在同一页面上
-  // if (!answer) return false
 })
 const onSave = async () => {
   // 有 id 为修改，无 id 为新增
@@ -486,6 +493,8 @@ const onSave = async () => {
       // 新增时保存 id，用于修改时使用
       formState.id = data.id
     }
+    // 保存成功后，赋值表单初始值，用于下次编辑时判断是否有更改
+    Object.assign(formStateInit, cloneDeep(formState))
     userStore.setInvoiceData(formState)
     message.success('Save invoice successfully!')
   } else {
@@ -535,7 +544,7 @@ const getPhotoDataDetail = (data) => {
     description: data.description,
     addDetails: data.addDetails,
   }
-  const index = formState.invoicePhotos.findIndex(item => item.photoId === obj.photoId)
+  const index = formState.invoicePhotos.findIndex((item) => item.photoId === obj.photoId)
   if (index < 0) {
     formState.invoicePhotos.push(obj)
   } else {
