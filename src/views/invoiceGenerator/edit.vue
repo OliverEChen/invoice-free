@@ -426,7 +426,7 @@ const myVueSignature = ref(null)
 const editPhotoDetail = ref(null)
 onMounted(() => {
   Object.assign(formState, invoiceData.value)
-  Object.assign(formStateInit, invoiceData.value)
+  Object.assign(formStateInit, cloneDeep(invoiceData.value))
   getCurrencyList()
 })
 watch(
