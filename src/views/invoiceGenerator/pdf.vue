@@ -18,7 +18,7 @@ import { message } from 'ant-design-vue'
 const invoiceRef = ref(null)
 const userStore = useUserStore()
 const spinning = ref<boolean>(false)
-const id = userStore.invoiceData.id
+const id = userStore.invoiceData.idEncrypt
 const handleDownload = async () => {
   if (id) {
     spinning.value = true
