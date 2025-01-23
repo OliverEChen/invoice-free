@@ -67,7 +67,7 @@
                       >
 
                       <p>
-                        <a-button type="link" @click="onGetLink(record)">Get Link</a-button>
+                        <a-button type="link" @click="handleCopy(record)">Get Link</a-button>
                       </p>
                       <p>
                         <a-button type="link" @click="onSendEmail(record)">Email</a-button>
@@ -103,7 +103,7 @@ import Invoice from '@/components/invoice/index.vue'
 import { get, post } from '@/api/http'
 import router from '@/router'
 import { useUserStore } from '@/store/modules/user'
-import { printHTML, formatCurrency } from '@/utils/utils'
+import { printHTML, formatCurrency, copyToClipboard } from '@/utils/utils'
 import Email from '@/components/sendEmail/index.vue'
 import { Item } from 'ant-design-vue/es/menu'
 const spinning = ref<boolean>(false)
@@ -227,15 +227,20 @@ const onPrint = async ({idEncrypt}) => {
     spinning.value = false
   }
 }
-const onGetLink = async (record) => {
-  const linkUrl = import.meta.env.VITE_SERVE + `/link-page?id=${record.id}`
+const handleCopy = async (record) => {
+  const linkUrl = import.meta.env.VITE_SERVE + `/link-page?id=${record.idEncrypt}`
   try {
-    await navigator.clipboard.writeText(linkUrl)
-    Modal.success({
-      content: h('div', {}, [h('p', 'Link Copied!')]),
-    })
+    const success = await copyToClipboard(linkUrl)
+    if (success) {
+      Modal.success({
+        content: h('div', {}, [h('p', 'Link Copied!')]),
+      })
+    } else {
+      message.error('Link Copy Failed!')
+      console.error('复制失败', err)
+    }
   } catch (err) {
-    console.error('Linked Failed!', err)
+    console.error('复制出错:', err)
   }
 }
 const showDeleteConfirm = (id) => {

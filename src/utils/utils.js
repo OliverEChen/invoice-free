@@ -139,5 +139,40 @@ export const downloadFileByURL = (url) => {
     a.click()
     document.body.removeChild(a)
 }
+// 剪贴板工具函数
+ export const copyToClipboard = async (text) => {
+    try {
+      // 优先使用现代剪贴板API
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+  
+      // 降级方案：使用传统的document.execCommand
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      
+      // 防止滚动
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      try {
+        document.execCommand('copy');
+        textArea.remove();
+        return true;
+      } catch (err) {
+        textArea.remove();
+        return false;
+      }
+    } catch (err) {
+      console.error('复制失败:', err);
+      return false;
+    }
+  };
 
 
