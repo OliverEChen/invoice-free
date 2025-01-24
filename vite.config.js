@@ -12,8 +12,17 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd())
 
   return {
-    //获取各种环境下的对应的变量
-    base: './',
+    // base: './',
+    build: {
+      // 确保生成正确的文件类型
+      rollupOptions: {
+        output: {
+          chunkFileNames: 'js/[name]-[hash].js',
+          entryFileNames: 'js/[name]-[hash].js',
+          assetFileNames: 'assets/[ext]/[name]-[hash].[ext]'
+        }
+      }
+    },
     plugins: [
       vue(),
       vueDevTools(),
