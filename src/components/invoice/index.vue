@@ -105,8 +105,8 @@
           <div>{{ formatCurrency(invoiceData.currency) }} {{ invoiceData.discount }}</div>
         </div>
         <div style="display: flex; justify-content: space-between">
-          <div style="font-weight: 500">TAX(10%)</div>
-          <div>{{ invoiceData.tax }}</div>
+          <div style="font-weight: 500">TAX({{invoiceData.tax}}%)</div>
+          <div>{{ formatCurrency(invoiceData.currency) }} {{ (invoiceData.tax / 100) * invoiceData.subTotal }}</div>
         </div>
         <div style="border: 1px solid #ccc; margin: 8px 0"></div>
         <div style="display: flex; justify-content: space-between">
