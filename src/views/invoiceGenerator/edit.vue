@@ -380,6 +380,7 @@ const termsOption = [
 let currencyOption = ref([])
 const initialFormData = {
   id: null,
+  idEncrypt: '',
   number: '',
   date: dayjs().format('YYYY-MM-DD'),
   terms: 'On Receipt',
@@ -403,9 +404,10 @@ const initialFormData = {
   toPhone: '',
   toMobile: '',
   toFax: '',
-  currency: '',
+  currency: '144-$',
   subTotal: 0,
   tax: 0,
+  taxRate: 0,
   discount: 0,
   shippingFee: 0,
   total: 0,
@@ -479,7 +481,7 @@ onBeforeRouteLeave((to, from) => {
         return false
       } else {
         onSave()
-        generatorStore.removeActiveKey()
+        generatorStore.resetActiveKey()
         return answer
       }
     }
@@ -492,7 +494,10 @@ const onSave = async () => {
   if (code === '00000') {
     if (url === '/api/v1/invoice/save') {
       // 新增时保存 id，用于修改时使用
-      formState.id = data.id
+      Object.assign(formState, {
+        id: data.id,
+        idEncrypt: data.idEncrypt,
+      })
     }
     // 保存成功后，赋值表单初始值，用于下次编辑时判断是否有更改
     Object.assign(formStateInit, cloneDeep(formState))

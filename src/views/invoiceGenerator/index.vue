@@ -21,15 +21,15 @@ let tabList = ref(['Edit', 'Preview', 'PDF', 'Email', 'Print', 'Link'])
 const router = useRouter()
 const userStore = useUserStore()
 const generatorStore = useGeneratorStore()
-// watchEffect(() => {
-//   console.log('watchEffect')
-//   let path = router.currentRoute.value.path.split('/').pop()
-//   if(path === 'pdf'){
-//     activeKey.value = path.toUpperCase()
-//   }else {
-//     activeKey.value = path.charAt(0).toUpperCase() + path.slice(1)
-//   }
-// })
+watchEffect(() => {
+  console.log('watchEffect')
+  let path = router.currentRoute.value.path.split('/').pop()
+  if(path === 'pdf'){
+    activeKey.value = path.toUpperCase()
+  }else {
+    activeKey.value = path.charAt(0).toUpperCase() + path.slice(1)
+  }
+})
 watch(()=> generatorStore.activeKey, (val) => {
   console.log('watchKey', val)
   activeKey.value = val.split('-')[0]

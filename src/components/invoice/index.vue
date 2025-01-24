@@ -119,7 +119,7 @@
           <div style="font-weight: 700">{{ formatCurrency(invoiceData.currency) }} {{ invoiceData.total }}</div>
         </div>
         <div style="border: 1px solid #ccc; margin: 8px 0"></div>
-        <div style="page-break-inside: avoid;">
+        <div style="page-break-inside: avoid;" v-if="invoiceData.signatureUrl">
           <img
             style="width: 100px; height: 100px; margin-right: 20px"
             :src="invoiceData.signatureUrl"
@@ -129,7 +129,7 @@
         </div>
       </div>
     </div>
-    <div style="display: flex;flex-wrap: wrap;margin-top: 10px;">
+    <div style="display: flex;flex-wrap: wrap;margin-top: 10px;" v-if="invoiceData.invoicePhotos?.length > 0">
       <div style="margin: 0 10px 10px 0;width: 120px;display: flex;flex-direction: column;align-items: flex-start;page-break-inside: avoid;" v-for="item in invoiceData.invoicePhotos" :key="item.photoId">
         <div>
           <img style="width: 120px;object-fit: contain;" :src="item.photoUrl" />

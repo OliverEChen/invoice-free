@@ -10,8 +10,8 @@ export const useGeneratorStore = defineStore('generator', {
         setActiveKey(val) {
             this.activeKey += val
         },
-        removeActiveKey() {
-            this.activeKey = ''
+        resetActiveKey() {
+            this.activeKey = 'Edit-'
         }
     }
 })
