@@ -227,7 +227,7 @@
             </a-form-item>
             <a-form-item label="Tax %">
               <div class="flex f-a-center">
-                <a-input-number v-model:value="formState.tax" :precision="2" :max="100" :min="0" />
+                <a-input-number v-model:value="formState.taxRate" :precision="2" :max="100" :min="0" />
                 <span class="mg-l10">%</span>
               </div>
             </a-form-item>
@@ -444,14 +444,15 @@ watch(
 watch(
   [
     () => formState.subTotal,
-    () => formState.tax,
+    () => formState.taxRate,
     () => formState.discount,
     () => formState.shippingFee,
   ],
   (newVal) => {
-    // Total = subtotal + subtotal * tax - discount + sheeping fee
+    // Total = subtotal + subtotal * taxRate - discount + sheeping fee
     let sum = newVal[0] + (newVal[0] * (newVal[1] / 100) - newVal[2]) + newVal[3]
     formState.total = parseFloat(sum.toFixed(2))
+    formState.tax = parseFloat((newVal[0] * (newVal[1] / 100)).toFixed(2))
   },
 )
 const getCurrencyList = async () => {
