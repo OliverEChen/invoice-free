@@ -521,7 +521,7 @@ const filterCurrencyOption = (input, option) => {
   )
 }
 const handleItemAmount = (item) => {
-  item.amount = item.quantity * item.unitCost
+  item.amount = parseFloat((item.quantity * item.unitCost).toFixed(2))
 }
 const handleBubbleUp = (index) => {
   if (index > 0) {
