@@ -174,5 +174,17 @@ export const downloadFileByURL = (url) => {
       return false;
     }
   };
+  /**
+   * 将数值格式化为保留两位小数的字符串
+   *
+   * @param value 需要格式化的数值
+   * @returns 格式化后的字符串，如果value为null或undefined则返回空字符串
+   */
+  export const formatWith2Decimals = (value) => {
+    if (value) {
+      return Number(value).toFixed(2)
+    }
+    return ''
+  }
 
 

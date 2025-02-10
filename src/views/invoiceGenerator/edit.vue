@@ -171,6 +171,8 @@
                 id="inputNumber"
                 v-model:value="item.unitCost"
                 :precision="2"
+                :parser="(value) => +value.replace(/[^\d.]/g, '')"
+                :formatter="formatWith2Decimals"
                 :min="1"
                 @change="handleItemAmount(item)"
               />
@@ -179,6 +181,9 @@
               <a-input-number
                 id="inputNumber"
                 v-model:value="item.quantity"
+                :precision="0"
+                :formatter="(value) => `${value}`"
+                :parser="(value) => +value.replace('.', '')"
                 :min="1"
                 @change="handleItemAmount(item)"
               />
@@ -227,15 +232,41 @@
             </a-form-item>
             <a-form-item label="Tax %">
               <div class="flex f-a-center">
-                <a-input-number v-model:value="formState.taxRate" :precision="2" :max="100" :min="0" />
+                <a-input-number
+                  v-model:value="formState.taxRate"
+                  :precision="2"
+                  :parser="(value) => +value.replace(/[^\d.]/g, '')"
+                  :formatter="
+                    (value) => {
+                      if (value) {
+                        return Number(value).toFixed(2)
+                      }
+                      return ''
+                    }
+                  "
+                  :max="100"
+                  :min="0"
+                />
                 <span class="mg-l10">%</span>
               </div>
             </a-form-item>
             <a-form-item label="Discount">
-              <a-input-number v-model:value="formState.discount" :precision="2" :min="0" />
+              <a-input-number
+                v-model:value="formState.discount"
+                :precision="2"
+                :min="0"
+                :parser="(value) => +value.replace(/[^\d.]/g, '')"
+                :formatter="formatWith2Decimals"
+              />
             </a-form-item>
             <a-form-item label="Shipping Fee">
-              <a-input-number v-model:value="formState.shippingFee" :precision="2" :min="0" />
+              <a-input-number
+                v-model:value="formState.shippingFee"
+                :precision="2"
+                :min="0"
+                :parser="(value) => +value.replace(/[^\d.]/g, '')"
+                :formatter="formatWith2Decimals"
+              />
             </a-form-item>
             <a-form-item label="Total">
               {{ formatCurrency(formState.currency) }} {{ formState.total }}
@@ -354,7 +385,7 @@ import { uploadApi, post, get } from '@/api/http'
 import { cloneDeep } from 'lodash'
 import { useUserStore } from '@/store/modules/user'
 import { storeToRefs } from 'pinia'
-import { formatCurrency, validateEmail } from '@/utils/utils'
+import { formatCurrency, validateEmail, formatWith2Decimals } from '@/utils/utils'
 import { useGeneratorStore } from '@/store/modules/generator'
 const termsOption = [
   'None',
@@ -602,7 +633,7 @@ const onDeleteItem = (index) => {
   formState.invoiceItems.splice(index, 1)
 }
 const getSignatureData = (data) => {
-  if(!data) return
+  if (!data) return
   const { file } = base64ToFile(data, `signature${Date.now()}.png`)
   const formData = new FormData()
   formData.append('file', file)
